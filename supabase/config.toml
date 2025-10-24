@@ -1,0 +1,13 @@
+project_id = "dfyzsbiawdrjspeokbfz"
+
+[functions.predict-crop-yield]
+verify_jwt = false
+
+[functions.recommend-crops]
+verify_jwt = false
+
+[functions.get-weather]
+verify_jwt = false
+
+[functions.detect-disease]
+verify_jwt = false

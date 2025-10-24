@@ -1,0 +1,224 @@
+import { useState } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
+import { Loader2, Leaf } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+interface CropRecommendation {
+  crop: string;
+  confidence: number;
+  reason: string;
+}
+
+const CropRecommendation = () => {
+  const { toast } = useToast();
+  const [loading, setLoading] = useState(false);
+  const [recommendations, setRecommendations] = useState<CropRecommendation[]>([]);
+  const [formData, setFormData] = useState({
+    nitrogen: "",
+    phosphorus: "",
+    potassium: "",
+    temperature: "",
+    humidity: "",
+    ph: "",
+    rainfall: "",
+    season: "",
+  });
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
+    setRecommendations([]);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("recommend-crops", {
+        body: formData,
+      });
+
+      if (error) throw error;
+
+      setRecommendations(data.recommendations);
+      toast({
+        title: "Recommendations Generated",
+        description: `Found ${data.recommendations.length} suitable crops`,
+      });
+    } catch (error) {
+      console.error("Recommendation error:", error);
+      toast({
+        title: "Recommendation Failed",
+        description: "Unable to generate recommendations. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Card className="border-primary/20">
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <Leaf className="h-5 w-5 text-primary" />
+          Crop Recommendation System
+        </CardTitle>
+        <CardDescription>
+          Get intelligent crop suggestions based on soil conditions, climate, and season
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="nitrogen">Nitrogen (N) - kg/ha</Label>
+              <Input
+                id="nitrogen"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 50"
+                value={formData.nitrogen}
+                onChange={(e) => setFormData({ ...formData, nitrogen: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="phosphorus">Phosphorus (P) - kg/ha</Label>
+              <Input
+                id="phosphorus"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 30"
+                value={formData.phosphorus}
+                onChange={(e) => setFormData({ ...formData, phosphorus: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="potassium">Potassium (K) - kg/ha</Label>
+              <Input
+                id="potassium"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 40"
+                value={formData.potassium}
+                onChange={(e) => setFormData({ ...formData, potassium: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="temperature">Temperature (°C)</Label>
+              <Input
+                id="temperature"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 25"
+                value={formData.temperature}
+                onChange={(e) => setFormData({ ...formData, temperature: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="humidity">Humidity (%)</Label>
+              <Input
+                id="humidity"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 65"
+                value={formData.humidity}
+                onChange={(e) => setFormData({ ...formData, humidity: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="ph">Soil pH</Label>
+              <Input
+                id="ph"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 6.5"
+                value={formData.ph}
+                onChange={(e) => setFormData({ ...formData, ph: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="rainfall">Rainfall (mm)</Label>
+              <Input
+                id="rainfall"
+                type="number"
+                step="0.1"
+                placeholder="e.g., 800"
+                value={formData.rainfall}
+                onChange={(e) => setFormData({ ...formData, rainfall: e.target.value })}
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="season">Season</Label>
+              <Select
+                value={formData.season}
+                onValueChange={(value) => setFormData({ ...formData, season: value })}
+                required
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select season" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="summer">Summer</SelectItem>
+                  <SelectItem value="winter">Winter</SelectItem>
+                  <SelectItem value="monsoon">Monsoon</SelectItem>
+                  <SelectItem value="spring">Spring</SelectItem>
+                  <SelectItem value="autumn">Autumn</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <Button type="submit" disabled={loading} className="w-full">
+            {loading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Analyzing...
+              </>
+            ) : (
+              "Get Recommendations"
+            )}
+          </Button>
+        </form>
+
+        {recommendations.length > 0 && (
+          <div className="mt-6 space-y-3">
+            <h3 className="font-semibold text-lg">Recommended Crops</h3>
+            {recommendations.map((rec, index) => (
+              <div
+                key={index}
+                className="p-4 bg-card border rounded-lg hover:border-primary/50 transition-colors"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <h4 className="font-semibold text-lg capitalize">{rec.crop}</h4>
+                  <Badge variant="secondary">
+                    {(rec.confidence * 100).toFixed(0)}% match
+                  </Badge>
+                </div>
+                <p className="text-sm text-muted-foreground">{rec.reason}</p>
+              </div>
+            ))}
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
+
+export default CropRecommendation;
