@@ -11,8 +11,8 @@ serve(async (req) => {
   }
 
   try {
-    const { location } = await req.json();
-    console.log('Fetching weather for:', location);
+    const { location, lat, lon } = await req.json();
+    console.log('Fetching weather for:', location || `${lat},${lon}`);
 
     const apiKey = Deno.env.get('OPENWEATHER_API_KEY');
     
@@ -20,7 +20,7 @@ serve(async (req) => {
       // Return mock data if API key not configured
       console.log('No API key found, returning mock data');
       const mockData = {
-        location: location,
+        location: location || 'Current Location',
         temperature: 25,
         feelsLike: 27,
         humidity: 65,
@@ -29,6 +29,7 @@ serve(async (req) => {
         description: 'partly cloudy',
         visibility: 10000,
         cloudCover: 40,
+        rainfall: 800,
       };
       
       return new Response(
@@ -38,9 +39,14 @@ serve(async (req) => {
     }
 
     // Fetch real weather data from OpenWeatherMap
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`
-    );
+    let url;
+    if (lat && lon) {
+      url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+    } else {
+      url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
+    }
+    
+    const response = await fetch(url);
 
     if (!response.ok) {
       throw new Error('Weather API request failed');
@@ -58,6 +64,7 @@ serve(async (req) => {
       description: data.weather[0].description,
       visibility: data.visibility,
       cloudCover: data.clouds.all,
+      rainfall: data.rain?.['1h'] ? data.rain['1h'] * 30 * 24 : 800, // Estimate monthly rainfall
     };
 
     return new Response(

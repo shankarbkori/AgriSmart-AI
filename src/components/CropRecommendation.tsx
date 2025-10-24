@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Leaf } from "lucide-react";
+import { Loader2, Leaf, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface CropRecommendation {
@@ -18,6 +18,7 @@ interface CropRecommendation {
 const CropRecommendation = () => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [fetchingLocation, setFetchingLocation] = useState(false);
   const [recommendations, setRecommendations] = useState<CropRecommendation[]>([]);
   const [formData, setFormData] = useState({
     nitrogen: "",
@@ -29,6 +30,48 @@ const CropRecommendation = () => {
     rainfall: "",
     season: "",
   });
+
+  const fetchLocationData = async () => {
+    setFetchingLocation(true);
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject);
+      });
+
+      const { latitude, longitude } = position.coords;
+
+      const { data, error } = await supabase.functions.invoke("get-weather", {
+        body: { lat: latitude, lon: longitude },
+      });
+
+      if (error) throw error;
+
+      setFormData(prev => ({
+        ...prev,
+        temperature: data.temperature.toString(),
+        humidity: data.humidity.toString(),
+        rainfall: data.rainfall.toString(),
+      }));
+
+      toast({
+        title: "Location Data Loaded",
+        description: "Weather data has been auto-populated based on your location.",
+      });
+    } catch (error) {
+      console.error("Location error:", error);
+      toast({
+        title: "Location Access Failed",
+        description: "Unable to fetch location data. Please enter values manually.",
+        variant: "destructive",
+      });
+    } finally {
+      setFetchingLocation(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchLocationData();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,13 +105,32 @@ const CropRecommendation = () => {
   return (
     <Card className="border-primary/20">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Leaf className="h-5 w-5 text-primary" />
-          Crop Recommendation System
-        </CardTitle>
-        <CardDescription>
-          Get intelligent crop suggestions based on soil conditions, climate, and season
-        </CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Leaf className="h-5 w-5 text-primary" />
+              Crop Recommendation System
+            </CardTitle>
+            <CardDescription>
+              Get intelligent crop suggestions based on soil conditions, climate, and season
+            </CardDescription>
+          </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={fetchLocationData}
+            disabled={fetchingLocation}
+          >
+            {fetchingLocation ? (
+              <Loader2 className="h-4 w-4 animate-spin" />
+            ) : (
+              <>
+                <MapPin className="h-4 w-4 mr-2" />
+                Refresh Location
+              </>
+            )}
+          </Button>
+        </div>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
