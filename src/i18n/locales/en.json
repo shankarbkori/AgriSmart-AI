@@ -1,0 +1,76 @@
+{
+  "app": {
+    "title": "AgriSmart AI",
+    "subtitle": "Advanced Agricultural Intelligence System"
+  },
+  "tabs": {
+    "yieldPrediction": "Yield Prediction",
+    "cropRecommendation": "Crop Recommendation",
+    "weather": "Weather Dashboard",
+    "diseaseDetection": "Disease Detection"
+  },
+  "yieldPrediction": {
+    "title": "Crop Yield Prediction",
+    "description": "Predict crop production using machine learning based on environmental and agricultural factors",
+    "refreshLocation": "Refresh Location",
+    "cropType": "Crop Type",
+    "selectCrop": "Select crop type",
+    "area": "Area (hectares)",
+    "rainfall": "Rainfall (mm)",
+    "fertilizer": "Fertilizer (kg)",
+    "pesticide": "Pesticide (kg)",
+    "temperature": "Temperature (°C)",
+    "humidity": "Humidity (%)",
+    "predictYield": "Predict Yield",
+    "predicting": "Predicting..."
+  },
+  "cropRecommendation": {
+    "title": "Crop Recommendation",
+    "description": "Get intelligent crop suggestions based on soil conditions and climate data",
+    "refreshLocation": "Refresh Location",
+    "nitrogen": "Nitrogen (N)",
+    "phosphorus": "Phosphorus (P)",
+    "potassium": "Potassium (K)",
+    "temperature": "Temperature (°C)",
+    "humidity": "Humidity (%)",
+    "rainfall": "Rainfall (mm)",
+    "ph": "pH Level",
+    "getRecommendation": "Get Recommendation",
+    "analyzing": "Analyzing..."
+  },
+  "weather": {
+    "title": "Weather Dashboard",
+    "description": "Real-time weather information and forecasts for informed farming decisions",
+    "location": "Location",
+    "enterLocation": "Enter city or coordinates",
+    "getWeather": "Get Weather",
+    "loading": "Loading...",
+    "currentWeather": "Current Weather",
+    "temperature": "Temperature",
+    "humidity": "Humidity",
+    "windSpeed": "Wind Speed",
+    "conditions": "Conditions"
+  },
+  "disease": {
+    "title": "Crop Disease Detection",
+    "description": "Upload a plant image to detect diseases using advanced CNN-based image analysis",
+    "uploadImage": "Click to upload plant image",
+    "fileTypes": "PNG, JPG up to 10MB",
+    "analyzeImage": "Analyze Image",
+    "analyzing": "Analyzing...",
+    "noImage": "No Image Selected",
+    "noImageDesc": "Please select a plant image to analyze",
+    "analysisComplete": "Analysis Complete",
+    "diseaseDetected": "Disease detected",
+    "analysisFailed": "Analysis Failed",
+    "severity": "Severity",
+    "confidence": "confidence",
+    "description": "Description",
+    "treatment": "Recommended Treatment",
+    "suggestions": "Suggestions for Better Results"
+  },
+  "common": {
+    "locationFetched": "Location data fetched successfully",
+    "locationError": "Failed to fetch location data"
+  }
+}

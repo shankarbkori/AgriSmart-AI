@@ -1,0 +1,76 @@
+{
+  "app": {
+    "title": "એગ્રિસ્માર્ટ AI",
+    "subtitle": "અદ્યતન કૃષિ બુદ્ધિમત્તા પ્રણાલી"
+  },
+  "tabs": {
+    "yieldPrediction": "ઉપજ આગાહી",
+    "cropRecommendation": "પાક ભલામણ",
+    "weather": "હવામાન ડેશબોર્ડ",
+    "diseaseDetection": "રોગ શોધ"
+  },
+  "yieldPrediction": {
+    "title": "પાક ઉપજ આગાહી",
+    "description": "પર્યાવરણીય અને કૃષિ પરિબળો પર આધારિત મશીન લર્નિંગનો ઉપયોગ કરીને પાક ઉત્પાદનની આગાહી કરો",
+    "refreshLocation": "સ્થાન રિફ્રેશ કરો",
+    "cropType": "પાક પ્રકાર",
+    "selectCrop": "પાક પ્રકાર પસંદ કરો",
+    "area": "વિસ્તાર (હેક્ટર)",
+    "rainfall": "વરસાદ (મિમી)",
+    "fertilizer": "ખાતર (કિલો)",
+    "pesticide": "જંતુનાશક (કિલો)",
+    "temperature": "તાપમાન (°C)",
+    "humidity": "ભેજ (%)",
+    "predictYield": "ઉપજની આગાહી કરો",
+    "predicting": "આગાહી કરી રહ્યા છીએ..."
+  },
+  "cropRecommendation": {
+    "title": "પાક ભલામણ",
+    "description": "માટીની સ્થિતિ અને આબોહવા ડેટાના આધારે બુદ્ધિશાળી પાક સૂચનો મેળવો",
+    "refreshLocation": "સ્થાન રિફ્રેશ કરો",
+    "nitrogen": "નાઇટ્રોજન (N)",
+    "phosphorus": "ફોસ્ફરસ (P)",
+    "potassium": "પોટેશિયમ (K)",
+    "temperature": "તાપમાન (°C)",
+    "humidity": "ભેજ (%)",
+    "rainfall": "વરસાદ (મિમી)",
+    "ph": "pH સ્તર",
+    "getRecommendation": "ભલામણ મેળવો",
+    "analyzing": "વિશ્લેષણ કરી રહ્યા છીએ..."
+  },
+  "weather": {
+    "title": "હવામાન ડેશબોર્ડ",
+    "description": "માહિતીપૂર્ણ ખેતી નિર્ણયો માટે રીઅલ-ટાઇમ હવામાન માહિતી અને આગાહીઓ",
+    "location": "સ્થાન",
+    "enterLocation": "શહેર અથવા કોઓર્ડિનેટ્સ દાખલ કરો",
+    "getWeather": "હવામાન મેળવો",
+    "loading": "લોડ થઈ રહ્યું છે...",
+    "currentWeather": "વર્તમાન હવામાન",
+    "temperature": "તાપમાન",
+    "humidity": "ભેજ",
+    "windSpeed": "પવનની ગતિ",
+    "conditions": "સ્થિતિઓ"
+  },
+  "disease": {
+    "title": "પાક રોગ શોધ",
+    "description": "અદ્યતન CNN-આધારિત છબી વિશ્લેષણનો ઉપયોગ કરીને રોગો શોધવા માટે છોડની છબી અપલોડ કરો",
+    "uploadImage": "છોડની છબી અપલોડ કરવા માટે ક્લિક કરો",
+    "fileTypes": "PNG, JPG 10MB સુધી",
+    "analyzeImage": "છબીનું વિશ્લેષણ કરો",
+    "analyzing": "વિશ્લેષણ કરી રહ્યા છીએ...",
+    "noImage": "કોઈ છબી પસંદ કરેલી નથી",
+    "noImageDesc": "કૃપા કરીને વિશ્લેષણ માટે છોડની છબી પસંદ કરો",
+    "analysisComplete": "વિશ્લેષણ પૂર્ણ",
+    "diseaseDetected": "રોગ શોધાયો",
+    "analysisFailed": "વિશ્લેષણ નિષ્ફળ",
+    "severity": "તીવ્રતા",
+    "confidence": "વિશ્વાસ",
+    "description": "વર્ણન",
+    "treatment": "ભલામણ કરેલ સારવાર",
+    "suggestions": "સારા પરિણામો માટે સૂચનો"
+  },
+  "common": {
+    "locationFetched": "સ્થાન ડેટા સફળતાપૂર્વક મેળવ્યો",
+    "locationError": "સ્થાન ડેટા મેળવવામાં નિષ્ફળ"
+  }
+}

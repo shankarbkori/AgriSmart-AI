@@ -1,0 +1,76 @@
+{
+  "app": {
+    "title": "অ্যাগ্রিস্মার্ট AI",
+    "subtitle": "উন্নত কৃষি বুদ্ধিমত্তা সিস্টেম"
+  },
+  "tabs": {
+    "yieldPrediction": "ফলন পূর্বাভাস",
+    "cropRecommendation": "ফসল সুপারিশ",
+    "weather": "আবহাওয়া ড্যাশবোর্ড",
+    "diseaseDetection": "রোগ সনাক্তকরণ"
+  },
+  "yieldPrediction": {
+    "title": "ফসল ফলন পূর্বাভাস",
+    "description": "পরিবেশগত এবং কৃষি কারণের উপর ভিত্তি করে মেশিন লার্নিং ব্যবহার করে ফসল উৎপাদনের পূর্বাভাস দিন",
+    "refreshLocation": "অবস্থান রিফ্রেশ করুন",
+    "cropType": "ফসলের ধরন",
+    "selectCrop": "ফসলের ধরন নির্বাচন করুন",
+    "area": "এলাকা (হেক্টর)",
+    "rainfall": "বৃষ্টিপাত (মিমি)",
+    "fertilizer": "সার (কেজি)",
+    "pesticide": "কীটনাশক (কেজি)",
+    "temperature": "তাপমাত্রা (°C)",
+    "humidity": "আর্দ্রতা (%)",
+    "predictYield": "ফলন পূর্বাভাস করুন",
+    "predicting": "পূর্বাভাস করা হচ্ছে..."
+  },
+  "cropRecommendation": {
+    "title": "ফসল সুপারিশ",
+    "description": "মাটির অবস্থা এবং জলবায়ু তথ্যের উপর ভিত্তি করে বুদ্ধিমান ফসল পরামর্শ পান",
+    "refreshLocation": "অবস্থান রিফ্রেশ করুন",
+    "nitrogen": "নাইট্রোজেন (N)",
+    "phosphorus": "ফসফরাস (P)",
+    "potassium": "পটাশিয়াম (K)",
+    "temperature": "তাপমাত্রা (°C)",
+    "humidity": "আর্দ্রতা (%)",
+    "rainfall": "বৃষ্টিপাত (মিমি)",
+    "ph": "pH স্তর",
+    "getRecommendation": "সুপারিশ পান",
+    "analyzing": "বিশ্লেষণ করা হচ্ছে..."
+  },
+  "weather": {
+    "title": "আবহাওয়া ড্যাশবোর্ড",
+    "description": "তথ্যপূর্ণ কৃষি সিদ্ধান্তের জন্য রিয়েল-টাইম আবহাওয়া তথ্য এবং পূর্বাভাস",
+    "location": "অবস্থান",
+    "enterLocation": "শহর বা স্থানাঙ্ক লিখুন",
+    "getWeather": "আবহাওয়া পান",
+    "loading": "লোড হচ্ছে...",
+    "currentWeather": "বর্তমান আবহাওয়া",
+    "temperature": "তাপমাত্রা",
+    "humidity": "আর্দ্রতা",
+    "windSpeed": "বাতাসের গতি",
+    "conditions": "অবস্থা"
+  },
+  "disease": {
+    "title": "ফসল রোগ সনাক্তকরণ",
+    "description": "উন্নত CNN-ভিত্তিক চিত্র বিশ্লেষণ ব্যবহার করে রোগ সনাক্ত করতে গাছের ছবি আপলোড করুন",
+    "uploadImage": "গাছের ছবি আপলোড করতে ক্লিক করুন",
+    "fileTypes": "PNG, JPG ১০MB পর্যন্ত",
+    "analyzeImage": "ছবি বিশ্লেষণ করুন",
+    "analyzing": "বিশ্লেষণ করা হচ্ছে...",
+    "noImage": "কোন ছবি নির্বাচন করা হয়নি",
+    "noImageDesc": "অনুগ্রহ করে বিশ্লেষণের জন্য একটি গাছের ছবি নির্বাচন করুন",
+    "analysisComplete": "বিশ্লেষণ সম্পূর্ণ",
+    "diseaseDetected": "রোগ সনাক্ত করা হয়েছে",
+    "analysisFailed": "বিশ্লেষণ ব্যর্থ",
+    "severity": "তীব্রতা",
+    "confidence": "আত্মবিশ্বাস",
+    "description": "বিবরণ",
+    "treatment": "প্রস্তাবিত চিকিৎসা",
+    "suggestions": "ভাল ফলাফলের জন্য পরামর্শ"
+  },
+  "common": {
+    "locationFetched": "অবস্থান তথ্য সফলভাবে আনা হয়েছে",
+    "locationError": "অবস্থান তথ্য আনতে ব্যর্থ"
+  }
+}

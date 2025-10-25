@@ -1,0 +1,76 @@
+{
+  "app": {
+    "title": "एग्रीस्मार्ट एआई",
+    "subtitle": "उन्नत कृषि बुद्धिमत्ता प्रणाली"
+  },
+  "tabs": {
+    "yieldPrediction": "उपज भविष्यवाणी",
+    "cropRecommendation": "फसल सिफारिश",
+    "weather": "मौसम डैशबोर्ड",
+    "diseaseDetection": "रोग का पता लगाना"
+  },
+  "yieldPrediction": {
+    "title": "फसल उपज भविष्यवाणी",
+    "description": "पर्यावरणीय और कृषि कारकों के आधार पर मशीन लर्निंग का उपयोग करके फसल उत्पादन की भविष्यवाणी करें",
+    "refreshLocation": "स्थान ताज़ा करें",
+    "cropType": "फसल का प्रकार",
+    "selectCrop": "फसल का प्रकार चुनें",
+    "area": "क्षेत्रफल (हेक्टेयर)",
+    "rainfall": "वर्षा (मिमी)",
+    "fertilizer": "उर्वरक (किलो)",
+    "pesticide": "कीटनाशक (किलो)",
+    "temperature": "तापमान (°C)",
+    "humidity": "आर्द्रता (%)",
+    "predictYield": "उपज की भविष्यवाणी करें",
+    "predicting": "भविष्यवाणी कर रहे हैं..."
+  },
+  "cropRecommendation": {
+    "title": "फसल सिफारिश",
+    "description": "मिट्टी की स्थिति और जलवायु डेटा के आधार पर बुद्धिमान फसल सुझाव प्राप्त करें",
+    "refreshLocation": "स्थान ताज़ा करें",
+    "nitrogen": "नाइट्रोजन (N)",
+    "phosphorus": "फास्फोरस (P)",
+    "potassium": "पोटैशियम (K)",
+    "temperature": "तापमान (°C)",
+    "humidity": "आर्द्रता (%)",
+    "rainfall": "वर्षा (मिमी)",
+    "ph": "pH स्तर",
+    "getRecommendation": "सिफारिश प्राप्त करें",
+    "analyzing": "विश्लेषण कर रहे हैं..."
+  },
+  "weather": {
+    "title": "मौसम डैशबोर्ड",
+    "description": "सूचित खेती के निर्णयों के लिए वास्तविक समय मौसम जानकारी और पूर्वानुमान",
+    "location": "स्थान",
+    "enterLocation": "शहर या निर्देशांक दर्ज करें",
+    "getWeather": "मौसम प्राप्त करें",
+    "loading": "लोड हो रहा है...",
+    "currentWeather": "वर्तमान मौसम",
+    "temperature": "तापमान",
+    "humidity": "आर्द्रता",
+    "windSpeed": "हवा की गति",
+    "conditions": "स्थितियाँ"
+  },
+  "disease": {
+    "title": "फसल रोग का पता लगाना",
+    "description": "उन्नत CNN-आधारित छवि विश्लेषण का उपयोग करके रोगों का पता लगाने के लिए पौधे की छवि अपलोड करें",
+    "uploadImage": "पौधे की छवि अपलोड करने के लिए क्लिक करें",
+    "fileTypes": "PNG, JPG 10MB तक",
+    "analyzeImage": "छवि का विश्लेषण करें",
+    "analyzing": "विश्लेषण कर रहे हैं...",
+    "noImage": "कोई छवि चयनित नहीं",
+    "noImageDesc": "कृपया विश्लेषण के लिए पौधे की छवि चुनें",
+    "analysisComplete": "विश्लेषण पूर्ण",
+    "diseaseDetected": "रोग का पता चला",
+    "analysisFailed": "विश्लेषण विफल",
+    "severity": "गंभीरता",
+    "confidence": "विश्वास",
+    "description": "विवरण",
+    "treatment": "अनुशंसित उपचार",
+    "suggestions": "बेहतर परिणामों के लिए सुझाव"
+  },
+  "common": {
+    "locationFetched": "स्थान डेटा सफलतापूर्वक प्राप्त किया गया",
+    "locationError": "स्थान डेटा प्राप्त करने में विफल"
+  }
+}

@@ -89,7 +89,12 @@ serve(async (req) => {
     console.log('Detecting disease in uploaded image');
 
     if (!image) {
-      throw new Error('No image provided');
+      throw new Error('No image provided. Please upload a clear image of the affected plant leaves or stems.');
+    }
+
+    // Validate image format
+    if (!image.startsWith('data:image/')) {
+      throw new Error('Invalid image format. Please upload a JPG or PNG image.');
     }
 
     // Simulate processing time
@@ -100,14 +105,34 @@ serve(async (req) => {
 
     console.log('Disease detection result:', result.disease);
 
+    // Add helpful suggestions based on result
+    const suggestions = [
+      'Take photos in good lighting conditions for better accuracy',
+      'Capture close-up images of affected areas',
+      'Include both top and bottom sides of leaves if possible',
+      'Avoid blurry or low-resolution images'
+    ];
+
     return new Response(
-      JSON.stringify(result),
+      JSON.stringify({
+        ...result,
+        suggestions,
+        timestamp: new Date().toISOString()
+      }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   } catch (error) {
     console.error('Error in detect-disease:', error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      JSON.stringify({ 
+        error: error instanceof Error ? error.message : 'Unknown error',
+        suggestions: [
+          'Ensure image is clear and well-lit',
+          'Try uploading a different image',
+          'Check your internet connection',
+          'Image size should be less than 10MB'
+        ]
+      }),
       { 
         status: 500, 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 

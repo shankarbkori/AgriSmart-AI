@@ -47,28 +47,36 @@ const DiseaseDetection = () => {
     setLoading(true);
 
     try {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const base64Image = reader.result as string;
-        
-        const { data, error } = await supabase.functions.invoke("detect-disease", {
-          body: { image: base64Image },
-        });
+      // Convert file to base64 properly
+      const base64Image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(selectedFile);
+      });
 
-        if (error) throw error;
+      console.log("Sending image to detect-disease function...");
+      
+      const { data, error } = await supabase.functions.invoke("detect-disease", {
+        body: { image: base64Image },
+      });
 
-        setResult(data);
-        toast({
-          title: "Analysis Complete",
-          description: `Disease detected: ${data.disease}`,
-        });
-      };
-      reader.readAsDataURL(selectedFile);
+      if (error) {
+        console.error("Edge function error:", error);
+        throw error;
+      }
+
+      console.log("Disease detection result:", data);
+      setResult(data);
+      toast({
+        title: "Analysis Complete",
+        description: `Disease detected: ${data.disease}`,
+      });
     } catch (error) {
       console.error("Disease detection error:", error);
       toast({
         title: "Analysis Failed",
-        description: "Unable to analyze the image. Please try again.",
+        description: error instanceof Error ? error.message : "Unable to analyze the image. Please try again.",
         variant: "destructive",
       });
     } finally {
