@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,6 +11,7 @@ import { Loader2, TrendingUp, MapPin } from "lucide-react";
 
 const CropYieldPrediction = () => {
   const { toast } = useToast();
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [fetchingLocation, setFetchingLocation] = useState(false);
   const [prediction, setPrediction] = useState<number | null>(null);
@@ -46,8 +48,8 @@ const CropYieldPrediction = () => {
       }));
 
       toast({
-        title: "Location Data Loaded",
-        description: "Weather data has been auto-populated based on your location.",
+        title: t('common.locationFetched'),
+        description: t('common.locationFetched'),
       });
     } catch (error) {
       console.error("Location error:", error);
