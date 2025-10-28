@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Leaf, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useTranslation } from "react-i18next";
 
 interface CropRecommendation {
   crop: string;
@@ -16,6 +17,7 @@ interface CropRecommendation {
 }
 
 const CropRecommendation = () => {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [fetchingLocation, setFetchingLocation] = useState(false);
@@ -54,14 +56,14 @@ const CropRecommendation = () => {
       }));
 
       toast({
-        title: "Location Data Loaded",
-        description: "Weather data has been auto-populated based on your location.",
+        title: t("cropRecommendation.locationDataLoaded"),
+        description: t("cropRecommendation.weatherAutoPopulated"),
       });
     } catch (error) {
       console.error("Location error:", error);
       toast({
-        title: "Location Access Failed",
-        description: "Unable to fetch location data. Please enter values manually.",
+        title: t("cropRecommendation.locationAccessFailed"),
+        description: t("cropRecommendation.enterManually"),
         variant: "destructive",
       });
     } finally {
@@ -87,14 +89,14 @@ const CropRecommendation = () => {
 
       setRecommendations(data.recommendations);
       toast({
-        title: "Recommendations Generated",
-        description: `Found ${data.recommendations.length} suitable crops`,
+        title: t("cropRecommendation.recommendationsGenerated"),
+        description: t("cropRecommendation.foundCrops").replace("{count}", data.recommendations.length),
       });
     } catch (error) {
       console.error("Recommendation error:", error);
       toast({
-        title: "Recommendation Failed",
-        description: "Unable to generate recommendations. Please try again.",
+        title: t("cropRecommendation.recommendationFailed"),
+        description: t("cropRecommendation.unableToGenerate"),
         variant: "destructive",
       });
     } finally {
@@ -109,10 +111,10 @@ const CropRecommendation = () => {
           <div>
             <CardTitle className="flex items-center gap-2">
               <Leaf className="h-5 w-5 text-primary" />
-              Crop Recommendation System
+              {t("cropRecommendation.title")}
             </CardTitle>
             <CardDescription>
-              Get intelligent crop suggestions based on soil conditions, climate, and season
+              {t("cropRecommendation.description")}
             </CardDescription>
           </div>
           <Button
@@ -126,7 +128,7 @@ const CropRecommendation = () => {
             ) : (
               <>
                 <MapPin className="h-4 w-4 mr-2" />
-                Refresh Location
+                {t("cropRecommendation.refreshLocation")}
               </>
             )}
           </Button>
@@ -136,7 +138,7 @@ const CropRecommendation = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="nitrogen">Nitrogen (N) - kg/ha</Label>
+              <Label htmlFor="nitrogen">{t("cropRecommendation.nitrogen")}</Label>
               <Input
                 id="nitrogen"
                 type="number"
@@ -149,7 +151,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="phosphorus">Phosphorus (P) - kg/ha</Label>
+              <Label htmlFor="phosphorus">{t("cropRecommendation.phosphorus")}</Label>
               <Input
                 id="phosphorus"
                 type="number"
@@ -162,7 +164,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="potassium">Potassium (K) - kg/ha</Label>
+              <Label htmlFor="potassium">{t("cropRecommendation.potassium")}</Label>
               <Input
                 id="potassium"
                 type="number"
@@ -175,7 +177,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="temperature">Temperature (°C)</Label>
+              <Label htmlFor="temperature">{t("cropRecommendation.temperature")}</Label>
               <Input
                 id="temperature"
                 type="number"
@@ -188,7 +190,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="humidity">Humidity (%)</Label>
+              <Label htmlFor="humidity">{t("cropRecommendation.humidity")}</Label>
               <Input
                 id="humidity"
                 type="number"
@@ -201,7 +203,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ph">Soil pH</Label>
+              <Label htmlFor="ph">{t("cropRecommendation.ph")}</Label>
               <Input
                 id="ph"
                 type="number"
@@ -214,7 +216,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rainfall">Rainfall (mm)</Label>
+              <Label htmlFor="rainfall">{t("cropRecommendation.rainfall")}</Label>
               <Input
                 id="rainfall"
                 type="number"
@@ -227,21 +229,21 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="season">Season</Label>
+              <Label htmlFor="season">{t("cropRecommendation.season")}</Label>
               <Select
                 value={formData.season}
                 onValueChange={(value) => setFormData({ ...formData, season: value })}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Select season" />
+                  <SelectValue placeholder={t("cropRecommendation.selectSeason")} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="summer">Summer</SelectItem>
-                  <SelectItem value="winter">Winter</SelectItem>
-                  <SelectItem value="monsoon">Monsoon</SelectItem>
-                  <SelectItem value="spring">Spring</SelectItem>
-                  <SelectItem value="autumn">Autumn</SelectItem>
+                  <SelectItem value="summer">{t("cropRecommendation.summer")}</SelectItem>
+                  <SelectItem value="winter">{t("cropRecommendation.winter")}</SelectItem>
+                  <SelectItem value="monsoon">{t("cropRecommendation.monsoon")}</SelectItem>
+                  <SelectItem value="spring">{t("cropRecommendation.spring")}</SelectItem>
+                  <SelectItem value="autumn">{t("cropRecommendation.autumn")}</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -251,17 +253,17 @@ const CropRecommendation = () => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Analyzing...
+                {t("cropRecommendation.analyzing")}
               </>
             ) : (
-              "Get Recommendations"
+              t("cropRecommendation.getRecommendations")
             )}
           </Button>
         </form>
 
         {recommendations.length > 0 && (
           <div className="mt-6 space-y-3">
-            <h3 className="font-semibold text-lg">Recommended Crops</h3>
+            <h3 className="font-semibold text-lg">{t("cropRecommendation.recommendedCrops")}</h3>
             {recommendations.map((rec, index) => (
               <div
                 key={index}
@@ -270,7 +272,7 @@ const CropRecommendation = () => {
                 <div className="flex items-start justify-between mb-2">
                   <h4 className="font-semibold text-lg capitalize">{rec.crop}</h4>
                   <Badge variant="secondary">
-                    {(rec.confidence * 100).toFixed(0)}% match
+                    {(rec.confidence * 100).toFixed(0)}% {t("cropRecommendation.match")}
                   </Badge>
                 </div>
                 <p className="text-sm text-muted-foreground">{rec.reason}</p>
