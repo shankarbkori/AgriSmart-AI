@@ -140,12 +140,28 @@ const CropYieldPrediction = () => {
                   <SelectValue placeholder={t('yieldPrediction.selectCrop')} />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="wheat">{t('yieldPrediction.wheat')}</SelectItem>
-                  <SelectItem value="rice">{t('yieldPrediction.rice')}</SelectItem>
-                  <SelectItem value="corn">{t('yieldPrediction.corn')}</SelectItem>
-                  <SelectItem value="soybean">{t('yieldPrediction.soybean')}</SelectItem>
-                  <SelectItem value="cotton">{t('yieldPrediction.cotton')}</SelectItem>
-                  <SelectItem value="sugarcane">{t('yieldPrediction.sugarcane')}</SelectItem>
+                  <SelectItem value="rice">Rice</SelectItem>
+                  <SelectItem value="maize">Maize</SelectItem>
+                  <SelectItem value="chickpea">Chickpea</SelectItem>
+                  <SelectItem value="kidneybeans">Kidney Beans</SelectItem>
+                  <SelectItem value="pigeonpeas">Pigeon Peas</SelectItem>
+                  <SelectItem value="mothbeans">Moth Beans</SelectItem>
+                  <SelectItem value="mungbean">Mung Bean</SelectItem>
+                  <SelectItem value="blackgram">Black Gram</SelectItem>
+                  <SelectItem value="lentil">Lentil</SelectItem>
+                  <SelectItem value="pomegranate">Pomegranate</SelectItem>
+                  <SelectItem value="banana">Banana</SelectItem>
+                  <SelectItem value="mango">Mango</SelectItem>
+                  <SelectItem value="grapes">Grapes</SelectItem>
+                  <SelectItem value="watermelon">Watermelon</SelectItem>
+                  <SelectItem value="muskmelon">Muskmelon</SelectItem>
+                  <SelectItem value="apple">Apple</SelectItem>
+                  <SelectItem value="orange">Orange</SelectItem>
+                  <SelectItem value="papaya">Papaya</SelectItem>
+                  <SelectItem value="coconut">Coconut</SelectItem>
+                  <SelectItem value="cotton">Cotton</SelectItem>
+                  <SelectItem value="jute">Jute</SelectItem>
+                  <SelectItem value="coffee">Coffee</SelectItem>
                 </SelectContent>
               </Select>
             </div>

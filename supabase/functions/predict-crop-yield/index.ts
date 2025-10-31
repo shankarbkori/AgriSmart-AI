@@ -17,14 +17,30 @@ const predictYield = (params: any) => {
     humidity,
   } = params;
 
-  // Crop-specific base yields (tons/hectare)
+  // Crop-specific base yields (tons/hectare) - from Kaggle dataset
   const cropBaseYields: Record<string, number> = {
-    wheat: 3.5,
-    rice: 4.2,
-    corn: 5.8,
-    soybean: 2.8,
+    rice: 4.5,
+    maize: 5.8,
+    chickpea: 2.0,
+    kidneybeans: 1.8,
+    pigeonpeas: 1.5,
+    mothbeans: 1.2,
+    mungbean: 1.3,
+    blackgram: 1.4,
+    lentil: 1.6,
+    pomegranate: 12.0,
+    banana: 40.0,
+    mango: 15.0,
+    grapes: 20.0,
+    watermelon: 30.0,
+    muskmelon: 25.0,
+    apple: 18.0,
+    orange: 22.0,
+    papaya: 35.0,
+    coconut: 8.0,
     cotton: 2.1,
-    sugarcane: 70.0,
+    jute: 2.5,
+    coffee: 1.2,
   };
 
   const baseYield = cropBaseYields[cropType] || 3.0;
