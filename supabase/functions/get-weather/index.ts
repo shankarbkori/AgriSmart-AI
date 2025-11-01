@@ -49,7 +49,9 @@ serve(async (req) => {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error('Weather API request failed');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('OpenWeatherMap API error:', response.status, errorData);
+      throw new Error(`Weather API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
     }
 
     const data = await response.json();
