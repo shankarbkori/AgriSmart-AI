@@ -293,6 +293,136 @@ const cropDatabase = [
       seasons: ['monsoon', 'summer']
     }
   },
+  {
+    crop: 'wheat',
+    optimalConditions: {
+      nitrogen: { min: 50, max: 80 },
+      phosphorus: { min: 35, max: 55 },
+      potassium: { min: 25, max: 40 },
+      temperature: { min: 12, max: 25 },
+      humidity: { min: 50, max: 70 },
+      ph: { min: 6.0, max: 7.5 },
+      rainfall: { min: 50, max: 100 },
+      seasons: ['winter', 'spring']
+    }
+  },
+  {
+    crop: 'tomato',
+    optimalConditions: {
+      nitrogen: { min: 60, max: 100 },
+      phosphorus: { min: 40, max: 60 },
+      potassium: { min: 50, max: 70 },
+      temperature: { min: 20, max: 30 },
+      humidity: { min: 60, max: 80 },
+      ph: { min: 6.0, max: 7.0 },
+      rainfall: { min: 50, max: 100 },
+      seasons: ['spring', 'summer', 'winter']
+    }
+  },
+  {
+    crop: 'potato',
+    optimalConditions: {
+      nitrogen: { min: 50, max: 90 },
+      phosphorus: { min: 50, max: 80 },
+      potassium: { min: 50, max: 80 },
+      temperature: { min: 15, max: 25 },
+      humidity: { min: 70, max: 90 },
+      ph: { min: 5.5, max: 7.0 },
+      rainfall: { min: 60, max: 120 },
+      seasons: ['winter', 'spring']
+    }
+  },
+  {
+    crop: 'onion',
+    optimalConditions: {
+      nitrogen: { min: 40, max: 70 },
+      phosphorus: { min: 30, max: 50 },
+      potassium: { min: 40, max: 60 },
+      temperature: { min: 13, max: 28 },
+      humidity: { min: 60, max: 75 },
+      ph: { min: 6.0, max: 7.5 },
+      rainfall: { min: 40, max: 80 },
+      seasons: ['winter', 'spring']
+    }
+  },
+  {
+    crop: 'sugarcane',
+    optimalConditions: {
+      nitrogen: { min: 100, max: 150 },
+      phosphorus: { min: 40, max: 60 },
+      potassium: { min: 60, max: 90 },
+      temperature: { min: 25, max: 38 },
+      humidity: { min: 75, max: 90 },
+      ph: { min: 6.0, max: 8.0 },
+      rainfall: { min: 150, max: 250 },
+      seasons: ['monsoon', 'summer']
+    }
+  },
+  {
+    crop: 'soybean',
+    optimalConditions: {
+      nitrogen: { min: 20, max: 40 },
+      phosphorus: { min: 40, max: 60 },
+      potassium: { min: 30, max: 50 },
+      temperature: { min: 20, max: 30 },
+      humidity: { min: 60, max: 80 },
+      ph: { min: 6.0, max: 7.5 },
+      rainfall: { min: 60, max: 120 },
+      seasons: ['monsoon', 'summer']
+    }
+  },
+  {
+    crop: 'peanut',
+    optimalConditions: {
+      nitrogen: { min: 20, max: 40 },
+      phosphorus: { min: 30, max: 50 },
+      potassium: { min: 30, max: 50 },
+      temperature: { min: 25, max: 35 },
+      humidity: { min: 55, max: 75 },
+      ph: { min: 6.0, max: 7.5 },
+      rainfall: { min: 50, max: 100 },
+      seasons: ['summer', 'monsoon']
+    }
+  },
+  {
+    crop: 'sunflower',
+    optimalConditions: {
+      nitrogen: { min: 50, max: 80 },
+      phosphorus: { min: 30, max: 50 },
+      potassium: { min: 40, max: 60 },
+      temperature: { min: 20, max: 32 },
+      humidity: { min: 50, max: 70 },
+      ph: { min: 6.0, max: 7.5 },
+      rainfall: { min: 40, max: 80 },
+      seasons: ['summer', 'spring']
+    }
+  },
+  {
+    crop: 'mustard',
+    optimalConditions: {
+      nitrogen: { min: 40, max: 70 },
+      phosphorus: { min: 30, max: 50 },
+      potassium: { min: 20, max: 40 },
+      temperature: { min: 10, max: 25 },
+      humidity: { min: 60, max: 75 },
+      ph: { min: 6.0, max: 7.5 },
+      rainfall: { min: 40, max: 80 },
+      seasons: ['winter', 'spring']
+    }
+  },
+  {
+    crop: 'tea',
+    optimalConditions: {
+      nitrogen: { min: 80, max: 120 },
+      phosphorus: { min: 20, max: 40 },
+      potassium: { min: 40, max: 60 },
+      temperature: { min: 18, max: 30 },
+      humidity: { min: 70, max: 90 },
+      ph: { min: 4.5, max: 6.0 },
+      rainfall: { min: 150, max: 300 },
+      seasons: ['monsoon', 'summer']
+    }
+  },
 ];
 
 const calculateConfidence = (params: any, cropConditions: any) => {
@@ -354,6 +484,16 @@ const getCropReason = (crop: string, confidence: number) => {
     cotton: 'Commercial fiber crop, warm climate preferred. Good market demand.',
     jute: 'Fiber crop, requires warm humid conditions. Important for textile industry.',
     coffee: 'Shade-loving crop, needs cool humid climate. Premium export commodity.',
+    wheat: 'Major cereal crop, needs cool climate. High protein staple grain.',
+    tomato: 'High-value vegetable, needs moderate climate. Year-round market demand.',
+    potato: 'Cool season tuber crop. Essential food crop with good storage.',
+    onion: 'Versatile vegetable, needs cool dry season. Excellent commercial crop.',
+    sugarcane: 'Tropical cash crop, needs warm humid climate. High water requirement.',
+    soybean: 'Nitrogen-fixing oilseed, versatile climate adaptation. High protein content.',
+    peanut: 'Oilseed legume, warm climate crop. Drought-resistant and profitable.',
+    sunflower: 'Oilseed crop, drought-tolerant. Short duration with good returns.',
+    mustard: 'Cool season oilseed, low water requirement. Good for winter season.',
+    tea: 'Perennial plantation crop, needs acidic soil. Premium beverage crop.',
   };
   
   return `${reasons[crop] || 'Suitable for your conditions.'} Match score: ${(confidence * 100).toFixed(0)}%`;

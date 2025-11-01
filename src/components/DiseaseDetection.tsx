@@ -13,6 +13,10 @@ interface DiseaseResult {
   description: string;
   treatment: string;
   severity: string;
+  pesticides?: string[];
+  fertilizers?: string[];
+  applicationTiming?: string;
+  preventiveMeasures?: string;
   suggestions?: string[];
   analysisMethod?: string;
 }
@@ -193,6 +197,42 @@ const DiseaseDetection = () => {
                   <h4 className="font-semibold mb-1">{t('disease.treatment')}</h4>
                   <p className="text-sm text-muted-foreground">{result.treatment}</p>
                 </div>
+
+                {result.pesticides && result.pesticides.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Recommended Pesticides</h4>
+                    <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                      {result.pesticides.map((pesticide, index) => (
+                        <li key={index}>{pesticide}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {result.fertilizers && result.fertilizers.length > 0 && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Recommended Fertilizers</h4>
+                    <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
+                      {result.fertilizers.map((fertilizer, index) => (
+                        <li key={index}>{fertilizer}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {result.applicationTiming && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Application Timing</h4>
+                    <p className="text-sm text-muted-foreground">{result.applicationTiming}</p>
+                  </div>
+                )}
+
+                {result.preventiveMeasures && (
+                  <div>
+                    <h4 className="font-semibold mb-1">Preventive Measures</h4>
+                    <p className="text-sm text-muted-foreground">{result.preventiveMeasures}</p>
+                  </div>
+                )}
 
                 {result.suggestions && result.suggestions.length > 0 && (
                   <div>

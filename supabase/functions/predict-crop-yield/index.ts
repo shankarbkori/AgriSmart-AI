@@ -20,6 +20,7 @@ const predictYield = (params: any) => {
   // Crop-specific base yields (tons/hectare) - from Kaggle dataset
   const cropBaseYields: Record<string, number> = {
     rice: 4.5,
+    wheat: 3.5,
     maize: 5.8,
     chickpea: 2.0,
     kidneybeans: 1.8,
@@ -41,6 +42,15 @@ const predictYield = (params: any) => {
     cotton: 2.1,
     jute: 2.5,
     coffee: 1.2,
+    tomato: 55.0,
+    potato: 25.0,
+    onion: 20.0,
+    sugarcane: 70.0,
+    soybean: 2.8,
+    peanut: 2.2,
+    sunflower: 2.5,
+    mustard: 1.5,
+    tea: 1.8,
   };
 
   const baseYield = cropBaseYields[cropType] || 3.0;
