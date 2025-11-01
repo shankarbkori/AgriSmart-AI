@@ -14,7 +14,7 @@ serve(async (req) => {
     const { location, lat, lon } = await req.json();
     console.log('Fetching weather for:', location || `${lat},${lon}`);
 
-    const apiKey = Deno.env.get('OPENWEATHER_API_KEY');
+    const apiKey = Deno.env.get('OPENWEATHER_API_KEY')?.trim();
     
     if (!apiKey) {
       // Return mock data if API key not configured
@@ -51,6 +51,31 @@ serve(async (req) => {
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       console.error('OpenWeatherMap API error:', response.status, errorData);
+
+      // Graceful fallback: return mock data for invalid key or rate limit
+      if (response.status === 401 || response.status === 429) {
+        const mockData = {
+          location: location || (lat && lon ? `${lat},${lon}` : 'Current Location'),
+          temperature: 25,
+          feelsLike: 27,
+          humidity: 65,
+          pressure: 1013,
+          windSpeed: 3.5,
+          description: 'partly cloudy',
+          visibility: 10000,
+          cloudCover: 40,
+          rainfall: 800,
+          source: 'mock',
+          note: response.status === 401
+            ? 'Invalid or inactive OpenWeather API key. Returning mock data.'
+            : 'Rate limited by OpenWeather. Returning mock data.'
+        };
+        return new Response(
+          JSON.stringify(mockData),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       throw new Error(`Weather API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);
     }
 
