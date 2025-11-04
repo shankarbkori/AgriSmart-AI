@@ -1,5 +1,30 @@
 # Implementation Documentation
 
+## 📋 Feature Mapping Notice
+
+**IMPORTANT**: This application implements **Agricultural Management Features**, not social media features.
+
+| Requested Section | Actual Implementation |
+|-------------------|----------------------|
+| 6.3.1 User Registration & Authentication | ❌ Not Implemented (No user accounts) |
+| 6.3.2 Profile Management | ❌ Not Implemented |
+| 6.3.3 Post Management | ❌ Not Implemented |
+| 6.3.4 Interaction Management | ❌ Not Implemented |
+| 6.3.5 Search Functionality | ❌ Not Implemented (No search bar) |
+| 6.3.6 Follow/Unfollow Management | ❌ Not Implemented |
+
+**What IS Implemented:**
+- ✅ **6.3.1** Crop Yield Prediction Module
+- ✅ **6.3.2** Crop Recommendation Module
+- ✅ **6.3.3** Weather Dashboard Module
+- ✅ **6.3.4** Disease Detection Module
+- ✅ **6.3.5** Language Selection Module (8 languages)
+- ✅ **6.3.6** Navigation & Routing Module
+
+This is a **farm management system** with AI-powered agricultural insights, not a social networking platform. The documentation below describes the actual implemented features.
+
+---
+
 ## 6.1 Concept
 
 ### Overview
@@ -189,7 +214,19 @@ For each crop in database:
 
 ## 6.3 Function Modules
 
-### 6.3.1 Crop Yield Prediction Module
+**IMPORTANT NOTE**: The current implementation focuses on **agricultural management features**, not social media features. The modules implemented are:
+- Crop Yield Prediction (instead of User Registration)
+- Crop Recommendation (instead of Profile Management)  
+- Weather Dashboard (instead of Post Management)
+- Disease Detection (instead of Interaction Management)
+- Language Selection (instead of Search Functionality)
+- Navigation & Routing (instead of Follow/Unfollow Management)
+
+If you need social media features (User Registration, Posts, Follow/Unfollow, etc.), those would need to be built separately.
+
+---
+
+### 6.3.1 Crop Yield Prediction Module (Primary Feature)
 
 **Component**: `CropYieldPrediction.tsx`  
 **Edge Function**: `predict-crop-yield/index.ts`
