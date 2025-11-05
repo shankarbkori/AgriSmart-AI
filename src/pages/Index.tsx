@@ -1,14 +1,71 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { supabase } from "@/integrations/supabase/client";
+import { User } from "@supabase/supabase-js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Sprout, Cloud, AlertCircle, BarChart3 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Sprout, Cloud, AlertCircle, BarChart3, LogOut, Loader2 } from "lucide-react";
 import CropYieldPrediction from "@/components/CropYieldPrediction";
 import CropRecommendation from "@/components/CropRecommendation";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import DiseaseDetection from "@/components/DiseaseDetection";
 import { LanguageSelector } from "@/components/LanguageSelector";
+import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check current session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null);
+      setLoading(false);
+      
+      if (!session) {
+        navigate("/auth");
+      }
+    });
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      setUser(session?.user ?? null);
+      
+      if (event === "SIGNED_OUT") {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, [navigate]);
+
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    
+    if (error) {
+      toast({
+        title: "Logout failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (!user) {
+    return null;
+  }
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted">
@@ -22,7 +79,18 @@ const Index = () => {
                 <p className="text-sm text-muted-foreground">{t('app.subtitle')}</p>
               </div>
             </div>
-            <LanguageSelector />
+            <div className="flex items-center gap-4">
+              <LanguageSelector />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleLogout}
+                className="gap-2"
+              >
+                <LogOut className="h-4 w-4" />
+                <span className="hidden sm:inline">Logout</span>
+              </Button>
+            </div>
           </div>
         </div>
       </header>
