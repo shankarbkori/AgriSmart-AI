@@ -119,7 +119,7 @@ const Auth = () => {
               <Sprout className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">Farm Management</CardTitle>
+          <CardTitle className="text-2xl font-bold">AgriSmart AI</CardTitle>
           <CardDescription>
             Sign in to access agricultural insights and tools
           </CardDescription>
