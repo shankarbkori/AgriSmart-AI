@@ -15,6 +15,7 @@ const CropYieldPrediction = () => {
   const [loading, setLoading] = useState(false);
   const [fetchingLocation, setFetchingLocation] = useState(false);
   const [prediction, setPrediction] = useState<number | null>(null);
+  const [manualLocation, setManualLocation] = useState("");
   const [formData, setFormData] = useState({
     cropType: "",
     area: "",
@@ -25,31 +26,43 @@ const CropYieldPrediction = () => {
     humidity: "",
   });
 
-  const fetchLocationData = async () => {
+  const fetchLocationData = async (locationName?: string) => {
     setFetchingLocation(true);
     try {
-      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
-        navigator.geolocation.getCurrentPosition(resolve, reject);
-      });
+      let weatherData;
+      
+      if (locationName) {
+        // Use manual location input
+        const { data, error } = await supabase.functions.invoke("get-weather", {
+          body: { location: locationName },
+        });
+        if (error) throw error;
+        weatherData = data;
+      } else {
+        // Use geolocation
+        const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(resolve, reject);
+        });
 
-      const { latitude, longitude } = position.coords;
+        const { latitude, longitude } = position.coords;
 
-      const { data, error } = await supabase.functions.invoke("get-weather", {
-        body: { lat: latitude, lon: longitude },
-      });
-
-      if (error) throw error;
+        const { data, error } = await supabase.functions.invoke("get-weather", {
+          body: { lat: latitude, lon: longitude },
+        });
+        if (error) throw error;
+        weatherData = data;
+      }
 
       setFormData(prev => ({
         ...prev,
-        temperature: data.temperature.toString(),
-        humidity: data.humidity.toString(),
-        rainfall: data.rainfall.toString(),
+        temperature: weatherData.temperature.toString(),
+        humidity: weatherData.humidity.toString(),
+        rainfall: weatherData.rainfall.toString(),
       }));
 
       toast({
         title: t('common.locationFetched'),
-        description: t('common.locationFetched'),
+        description: `Weather data loaded for ${weatherData.location}`,
       });
     } catch (error) {
       console.error("Location error:", error);
@@ -60,6 +73,18 @@ const CropYieldPrediction = () => {
       });
     } finally {
       setFetchingLocation(false);
+    }
+  };
+
+  const handleManualLocationFetch = () => {
+    if (manualLocation.trim()) {
+      fetchLocationData(manualLocation);
+    } else {
+      toast({
+        title: "Location Required",
+        description: "Please enter a location name",
+        variant: "destructive",
+      });
     }
   };
 
@@ -112,7 +137,7 @@ const CropYieldPrediction = () => {
           <Button
             variant="outline"
             size="sm"
-            onClick={fetchLocationData}
+            onClick={() => fetchLocationData()}
             disabled={fetchingLocation}
           >
             {fetchingLocation ? (
@@ -123,6 +148,23 @@ const CropYieldPrediction = () => {
                 {t('yieldPrediction.refreshLocation')}
               </>
             )}
+          </Button>
+        </div>
+        
+        <div className="flex gap-2 mt-4">
+          <Input
+            placeholder="Or enter location name (e.g., Mumbai, Delhi)"
+            value={manualLocation}
+            onChange={(e) => setManualLocation(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && handleManualLocationFetch()}
+            disabled={fetchingLocation}
+          />
+          <Button
+            variant="secondary"
+            onClick={handleManualLocationFetch}
+            disabled={fetchingLocation || !manualLocation.trim()}
+          >
+            Fetch
           </Button>
         </div>
       </CardHeader>
