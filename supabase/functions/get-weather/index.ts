@@ -19,17 +19,30 @@ serve(async (req) => {
     if (!apiKey) {
       // Return mock data if API key not configured
       console.log('No API key found, returning mock data');
+
+      // Estimate rainfall using provided coordinates when available
+      let annualRainfall = 900; // Default moderate
+      if (typeof lat === 'number' && typeof lon === 'number') {
+        if (lat >= -23.5 && lat <= 23.5) annualRainfall = 1800; // Tropics
+        else if ((lat > 23.5 && lat <= 40) || (lat < -23.5 && lat >= -40)) annualRainfall = 900; // Temperate
+        else if (lat >= 15 && lat <= 35 && ((lon >= -20 && lon <= 60) || (lon >= -120 && lon <= -100))) annualRainfall = 250; // Desert belts
+      }
+      const mockHumidity = 65;
+      if (mockHumidity < 40) annualRainfall *= 0.6;
+      else if (mockHumidity > 70) annualRainfall *= 1.2;
+
       const mockData = {
-        location: location || 'Current Location',
+        location: location || (typeof lat === 'number' && typeof lon === 'number' ? `${lat},${lon}` : 'Current Location'),
         temperature: 25,
         feelsLike: 27,
-        humidity: 65,
+        humidity: mockHumidity,
         pressure: 1013,
         windSpeed: 3.5,
         description: 'partly cloudy',
         visibility: 10000,
         cloudCover: 40,
-        rainfall: 800,
+        rainfall: Math.round(annualRainfall),
+        source: 'mock',
       };
       
       return new Response(
@@ -54,17 +67,28 @@ serve(async (req) => {
 
       // Graceful fallback: return mock data for invalid key or rate limit
       if (response.status === 401 || response.status === 429) {
+        // Estimate rainfall using provided coordinates when available
+        let annualRainfall = 900; // Default moderate
+        if (typeof lat === 'number' && typeof lon === 'number') {
+          if (lat >= -23.5 && lat <= 23.5) annualRainfall = 1800; // Tropics
+          else if ((lat > 23.5 && lat <= 40) || (lat < -23.5 && lat >= -40)) annualRainfall = 900; // Temperate
+          else if (lat >= 15 && lat <= 35 && ((lon >= -20 && lon <= 60) || (lon >= -120 && lon <= -100))) annualRainfall = 250; // Desert belts
+        }
+        const mockHumidity = 65;
+        if (mockHumidity < 40) annualRainfall *= 0.6;
+        else if (mockHumidity > 70) annualRainfall *= 1.2;
+
         const mockData = {
           location: location || (lat && lon ? `${lat},${lon}` : 'Current Location'),
           temperature: 25,
           feelsLike: 27,
-          humidity: 65,
+          humidity: mockHumidity,
           pressure: 1013,
           windSpeed: 3.5,
           description: 'partly cloudy',
           visibility: 10000,
           cloudCover: 40,
-          rainfall: 800,
+          rainfall: Math.round(annualRainfall),
           source: 'mock',
           note: response.status === 401
             ? 'Invalid or inactive OpenWeather API key. Returning mock data.'
