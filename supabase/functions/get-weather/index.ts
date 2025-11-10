@@ -5,6 +5,47 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Fetch historical rainfall data from Visual Crossing
+async function fetchRainfallData(lat: number, lon: number, apiKey: string): Promise<number> {
+  try {
+    // Get last 12 months of data for accurate annual rainfall
+    const endDate = new Date();
+    const startDate = new Date();
+    startDate.setFullYear(startDate.getFullYear() - 1);
+    
+    const startStr = startDate.toISOString().split('T')[0];
+    const endStr = endDate.toISOString().split('T')[0];
+    
+    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${lon}/${startStr}/${endStr}?unitGroup=metric&include=days&key=${apiKey}&contentType=json`;
+    
+    console.log('Fetching rainfall from Visual Crossing...');
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error('Visual Crossing API error:', response.status);
+      return 0; // Return 0 to indicate failure
+    }
+    
+    const data = await response.json();
+    
+    // Calculate total rainfall from daily data
+    let totalRainfall = 0;
+    if (data.days && Array.isArray(data.days)) {
+      data.days.forEach((day: any) => {
+        if (day.precip) {
+          totalRainfall += day.precip;
+        }
+      });
+    }
+    
+    console.log(`Annual rainfall from Visual Crossing: ${Math.round(totalRainfall)}mm`);
+    return Math.round(totalRainfall);
+  } catch (error) {
+    console.error('Error fetching rainfall data:', error);
+    return 0;
+  }
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -14,11 +55,12 @@ serve(async (req) => {
     const { location, lat, lon } = await req.json();
     console.log('Fetching weather for:', location || `${lat},${lon}`);
 
-    const apiKey = Deno.env.get('OPENWEATHER_API_KEY')?.trim();
+    const openWeatherApiKey = Deno.env.get('OPENWEATHER_API_KEY')?.trim();
+    const visualCrossingApiKey = Deno.env.get('VISUAL_CROSSING_API_KEY')?.trim();
     
-    if (!apiKey) {
+    if (!openWeatherApiKey) {
       // Return mock data if API key not configured
-      console.log('No API key found, returning mock data');
+      console.log('No OpenWeather API key found, returning mock data');
 
       // Estimate rainfall using provided coordinates when available
       let annualRainfall = 900; // Default moderate
@@ -54,9 +96,9 @@ serve(async (req) => {
     // Fetch real weather data from OpenWeatherMap
     let url;
     if (lat && lon) {
-      url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${apiKey}&units=metric`;
+      url = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${openWeatherApiKey}&units=metric`;
     } else {
-      url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${apiKey}&units=metric`;
+      url = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${openWeatherApiKey}&units=metric`;
     }
     
     const response = await fetch(url);
@@ -105,40 +147,51 @@ serve(async (req) => {
 
     const data = await response.json();
 
-    // Calculate realistic annual rainfall based on climate zones and latitude
+    // Get coordinates from OpenWeatherMap response
     const coordLat = data.coord.lat;
     const coordLon = data.coord.lon;
     
-    // Estimate annual rainfall based on geographical location and climate
-    let annualRainfall = 800; // Default moderate rainfall
+    // Try to get accurate rainfall from Visual Crossing
+    let annualRainfall = 0;
+    if (visualCrossingApiKey) {
+      annualRainfall = await fetchRainfallData(coordLat, coordLon, visualCrossingApiKey);
+    }
     
-    // Tropical regions (between tropics) - higher rainfall
-    if (coordLat >= -23.5 && coordLat <= 23.5) {
-      annualRainfall = 1800; // Tropical regions typically get 1500-2500mm
-    }
-    // Temperate regions - moderate rainfall
-    else if ((coordLat > 23.5 && coordLat <= 40) || (coordLat < -23.5 && coordLat >= -40)) {
-      annualRainfall = 900; // Temperate regions typically get 600-1200mm
-    }
-    // Semi-arid regions (near deserts) - check longitude for major desert belts
-    else if (coordLat >= 15 && coordLat <= 35) {
-      // Sahara, Arabian, and similar desert belts
-      if ((coordLon >= -20 && coordLon <= 60) || (coordLon >= -120 && coordLon <= -100)) {
-        annualRainfall = 250; // Arid/semi-arid regions
+    // If Visual Crossing failed or no API key, fall back to estimate
+    if (annualRainfall === 0) {
+      console.log('Using estimated rainfall based on climate zones');
+      annualRainfall = 800; // Default moderate rainfall
+      
+      // Tropical regions (between tropics) - higher rainfall
+      if (coordLat >= -23.5 && coordLat <= 23.5) {
+        annualRainfall = 1800; // Tropical regions typically get 1500-2500mm
       }
-    }
-    
-    // Adjust based on humidity - lower humidity suggests drier climate
-    if (data.main.humidity < 40) {
-      annualRainfall = annualRainfall * 0.6; // Reduce by 40% for low humidity
-    } else if (data.main.humidity > 70) {
-      annualRainfall = annualRainfall * 1.2; // Increase by 20% for high humidity
-    }
-    
-    // If there's recent rain data, use it to adjust estimate
-    if (data.rain?.['1h']) {
-      // Recent rain suggests higher rainfall region
-      annualRainfall = Math.max(annualRainfall, 1000);
+      // Temperate regions - moderate rainfall
+      else if ((coordLat > 23.5 && coordLat <= 40) || (coordLat < -23.5 && coordLat >= -40)) {
+        annualRainfall = 900; // Temperate regions typically get 600-1200mm
+      }
+      // Semi-arid regions (near deserts) - check longitude for major desert belts
+      else if (coordLat >= 15 && coordLat <= 35) {
+        // Sahara, Arabian, and similar desert belts
+        if ((coordLon >= -20 && coordLon <= 60) || (coordLon >= -120 && coordLon <= -100)) {
+          annualRainfall = 250; // Arid/semi-arid regions
+        }
+      }
+      
+      // Adjust based on humidity - lower humidity suggests drier climate
+      if (data.main.humidity < 40) {
+        annualRainfall = annualRainfall * 0.6; // Reduce by 40% for low humidity
+      } else if (data.main.humidity > 70) {
+        annualRainfall = annualRainfall * 1.2; // Increase by 20% for high humidity
+      }
+      
+      // If there's recent rain data, use it to adjust estimate
+      if (data.rain?.['1h']) {
+        // Recent rain suggests higher rainfall region
+        annualRainfall = Math.max(annualRainfall, 1000);
+      }
+      
+      annualRainfall = Math.round(annualRainfall);
     }
 
     const weatherData = {
@@ -151,7 +204,7 @@ serve(async (req) => {
       description: data.weather[0].description,
       visibility: data.visibility,
       cloudCover: data.clouds.all,
-      rainfall: Math.round(annualRainfall), // Annual rainfall in mm
+      rainfall: annualRainfall, // Annual rainfall in mm (actual historical or estimated)
       coordinates: { lat: coordLat, lon: coordLon },
     };
 
