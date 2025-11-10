@@ -49,7 +49,8 @@
     "temperature": "तापमान",
     "humidity": "आर्द्रता",
     "windSpeed": "वाऱ्याचा वेग",
-    "conditions": "परिस्थिती"
+    "conditions": "परिस्थिती",
+    "rainfall": "पाऊस"
   },
   "disease": {
     "title": "पीक रोग शोध",

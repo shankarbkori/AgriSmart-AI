@@ -66,6 +66,7 @@
     "pressure": "Pressure",
     "visibility": "Visibility",
     "cloudCover": "Cloud Cover",
+    "rainfall": "Rainfall",
     "weatherUpdated": "Weather Updated",
     "fetchedData": "Fetched latest weather data for",
     "weatherFailed": "Weather Fetch Failed",

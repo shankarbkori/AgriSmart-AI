@@ -49,7 +49,8 @@
     "temperature": "வெப்பநிலை",
     "humidity": "ஈரப்பதம்",
     "windSpeed": "காற்றின் வேகம்",
-    "conditions": "நிலைமைகள்"
+    "conditions": "நிலைமைகள்",
+    "rainfall": "மழைப்பொழிவு"
   },
   "disease": {
     "title": "பயிர் நோய் கண்டறிதல்",

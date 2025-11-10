@@ -49,7 +49,8 @@
     "temperature": "તાપમાન",
     "humidity": "ભેજ",
     "windSpeed": "પવનની ગતિ",
-    "conditions": "સ્થિતિઓ"
+    "conditions": "સ્થિતિઓ",
+    "rainfall": "વરસાદ"
   },
   "disease": {
     "title": "પાક રોગ શોધ",

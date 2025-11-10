@@ -18,6 +18,7 @@ interface WeatherData {
   description: string;
   visibility: number;
   cloudCover: number;
+  rainfall: number;
 }
 
 const WeatherDashboard = () => {
@@ -155,6 +156,14 @@ const WeatherDashboard = () => {
                   <span className="text-sm font-medium">{t("weather.cloudCover")}</span>
                 </div>
                 <p className="text-2xl font-bold">{weather.cloudCover}%</p>
+              </div>
+
+              <div className="p-4 bg-card border rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Droplets className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">{t("weather.rainfall")}</span>
+                </div>
+                <p className="text-2xl font-bold">{weather.rainfall} mm</p>
               </div>
             </div>
           </div>

@@ -52,7 +52,6 @@ const CropRecommendation = () => {
         ...prev,
         temperature: data.temperature.toString(),
         humidity: data.humidity.toString(),
-        rainfall: data.rainfall.toString(),
       }));
 
       toast({

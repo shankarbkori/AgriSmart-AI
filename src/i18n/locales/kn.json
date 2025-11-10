@@ -49,7 +49,8 @@
     "temperature": "ತಾಪಮಾನ",
     "humidity": "ಆರ್ದ್ರತೆ",
     "windSpeed": "ಗಾಳಿಯ ವೇಗ",
-    "conditions": "ಪರಿಸ್ಥಿತಿಗಳು"
+    "conditions": "ಪರಿಸ್ಥಿತಿಗಳು",
+    "rainfall": "ಮಳೆ"
   },
   "disease": {
     "title": "ಬೆಳೆ ರೋಗ ಪತ್ತೆ",
