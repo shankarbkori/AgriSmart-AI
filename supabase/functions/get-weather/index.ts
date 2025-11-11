@@ -5,10 +5,10 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Fetch historical rainfall data from Visual Crossing
-async function fetchRainfallData(lat: number, lon: number, apiKey: string): Promise<number> {
+// Fetch historical rainfall data from Visual Crossing (monthly)
+async function fetchRainfallData(lat: number, lon: number, apiKey: string): Promise<{ month: string; rainfall: number }[]> {
   try {
-    // Get last 12 months of data for accurate annual rainfall
+    // Get last 12 months of data
     const endDate = new Date();
     const startDate = new Date();
     startDate.setFullYear(startDate.getFullYear() - 1);
@@ -23,26 +23,46 @@ async function fetchRainfallData(lat: number, lon: number, apiKey: string): Prom
     
     if (!response.ok) {
       console.error('Visual Crossing API error:', response.status);
-      return 0; // Return 0 to indicate failure
+      return []; // Return empty array to indicate failure
     }
     
     const data = await response.json();
     
-    // Calculate total rainfall from daily data
-    let totalRainfall = 0;
+    // Calculate monthly rainfall
+    const monthlyData: { [key: string]: number } = {};
+    
     if (data.days && Array.isArray(data.days)) {
       data.days.forEach((day: any) => {
+        const date = new Date(day.datetime);
+        const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+        
+        if (!monthlyData[monthKey]) {
+          monthlyData[monthKey] = 0;
+        }
+        
         if (day.precip) {
-          totalRainfall += day.precip;
+          monthlyData[monthKey] += day.precip;
         }
       });
     }
     
-    console.log(`Annual rainfall from Visual Crossing: ${Math.round(totalRainfall)}mm`);
-    return Math.round(totalRainfall);
+    // Convert to array and sort by date
+    const monthlyArray = Object.entries(monthlyData)
+      .map(([month, rainfall]) => ({
+        month: new Date(month + '-01').toLocaleString('default', { month: 'short', year: 'numeric' }),
+        rainfall: Math.round(rainfall)
+      }))
+      .sort((a, b) => {
+        const dateA = new Date(a.month);
+        const dateB = new Date(b.month);
+        return dateA.getTime() - dateB.getTime();
+      });
+    
+    console.log(`Monthly rainfall data fetched: ${monthlyArray.length} months`);
+    return monthlyArray;
   } catch (error) {
     console.error('Error fetching rainfall data:', error);
-    return 0;
+    return [];
   }
 }
 
@@ -151,16 +171,16 @@ serve(async (req) => {
     const coordLat = data.coord.lat;
     const coordLon = data.coord.lon;
     
-    // Try to get accurate rainfall from Visual Crossing
-    let annualRainfall = 0;
+    // Try to get accurate monthly rainfall from Visual Crossing
+    let monthlyRainfall: { month: string; rainfall: number }[] = [];
     if (visualCrossingApiKey) {
-      annualRainfall = await fetchRainfallData(coordLat, coordLon, visualCrossingApiKey);
+      monthlyRainfall = await fetchRainfallData(coordLat, coordLon, visualCrossingApiKey);
     }
     
     // If Visual Crossing failed or no API key, fall back to estimate
-    if (annualRainfall === 0) {
-      console.log('Using estimated rainfall based on climate zones');
-      annualRainfall = 800; // Default moderate rainfall
+    if (monthlyRainfall.length === 0) {
+      console.log('Using estimated monthly rainfall based on climate zones');
+      let annualRainfall = 800; // Default moderate rainfall
       
       // Tropical regions (between tropics) - higher rainfall
       if (coordLat >= -23.5 && coordLat <= 23.5) {
@@ -191,7 +211,13 @@ serve(async (req) => {
         annualRainfall = Math.max(annualRainfall, 1000);
       }
       
-      annualRainfall = Math.round(annualRainfall);
+      // Create estimated monthly distribution (simple average for now)
+      const monthlyAvg = Math.round(annualRainfall / 12);
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      monthlyRainfall = months.map(month => ({
+        month,
+        rainfall: monthlyAvg
+      }));
     }
 
     const weatherData = {
@@ -204,7 +230,7 @@ serve(async (req) => {
       description: data.weather[0].description,
       visibility: data.visibility,
       cloudCover: data.clouds.all,
-      rainfall: annualRainfall, // Annual rainfall in mm (actual historical or estimated)
+      monthlyRainfall: monthlyRainfall, // Monthly rainfall data
       coordinates: { lat: coordLat, lon: coordLon },
     };
 
