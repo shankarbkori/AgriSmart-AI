@@ -71,7 +71,36 @@
     "suggestions": "ভাল ফলাফলের জন্য পরামর্শ"
   },
   "common": {
-    "locationFetched": "অবস্থান তথ্য সফলভাবে আনা হয়েছে",
-    "locationError": "অবস্থান তথ্য আনতে ব্যর্থ"
+    "locationFetched": "অবস্থান ডেটা সফলভাবে পাওয়া গেছে",
+    "locationError": "অবস্থান ডেটা পেতে ব্যর্থ"
+  },
+  "auth": {
+    "title": "এগ্রিস্মার্ট AI",
+    "subtitle": "কৃষি অন্তর্দৃষ্টি এবং সরঞ্জাম অ্যাক্সেস করতে সাইন ইন করুন",
+    "signIn": "সাইন ইন",
+    "signUp": "সাইন আপ",
+    "email": "ইমেইল",
+    "password": "পাসওয়ার্ড",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "সাইন ইন হচ্ছে...",
+    "creatingAccount": "অ্যাকাউন্ট তৈরি হচ্ছে...",
+    "createAccount": "অ্যাকাউন্ট তৈরি করুন",
+    "forgotPassword": "পাসওয়ার্ড ভুলে গেছেন?",
+    "minCharacters": "ন্যূনতম 6 অক্ষর",
+    "signUpFailed": "সাইন আপ ব্যর্থ হয়েছে",
+    "accountCreated": "অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে!",
+    "canNowLogin": "আপনি এখন আপনার শংসাপত্র দিয়ে লগইন করতে পারেন।",
+    "loginFailed": "লগইন ব্যর্থ হয়েছে",
+    "emailRequired": "ইমেইল প্রয়োজন",
+    "emailRequiredDesc": "পাসওয়ার্ড রিসেট করতে অনুগ্রহ করে আপনার ইমেইল ঠিকানা লিখুন।",
+    "resetFailed": "রিসেট ব্যর্থ হয়েছে",
+    "checkEmail": "আপনার ইমেইল চেক করুন",
+    "resetLinkSent": "পাসওয়ার্ড রিসেট লিঙ্ক আপনার ইমেইলে পাঠানো হয়েছে।"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "ওহ! পৃষ্ঠা খুঁজে পাওয়া যায়নি",
+    "returnHome": "হোমে ফিরে যান"
   }
 }

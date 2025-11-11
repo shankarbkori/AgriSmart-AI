@@ -73,5 +73,34 @@
   "common": {
     "locationFetched": "स्थान डेटा सफलतापूर्वक प्राप्त किया गया",
     "locationError": "स्थान डेटा प्राप्त करने में विफल"
+  },
+  "auth": {
+    "title": "एग्रीस्मार्ट AI",
+    "subtitle": "कृषि अंतर्दृष्टि और उपकरणों तक पहुँचने के लिए साइन इन करें",
+    "signIn": "साइन इन",
+    "signUp": "साइन अप",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "साइन इन हो रहा है...",
+    "creatingAccount": "खाता बनाया जा रहा है...",
+    "createAccount": "खाता बनाएं",
+    "forgotPassword": "पासवर्ड भूल गए?",
+    "minCharacters": "न्यूनतम 6 अक्षर",
+    "signUpFailed": "साइन अप विफल",
+    "accountCreated": "खाता सफलतापूर्वक बनाया गया!",
+    "canNowLogin": "अब आप अपने क्रेडेंशियल्स के साथ लॉग इन कर सकते हैं।",
+    "loginFailed": "लॉगिन विफल",
+    "emailRequired": "ईमेल आवश्यक है",
+    "emailRequiredDesc": "पासवर्ड रीसेट करने के लिए कृपया अपना ईमेल पता दर्ज करें।",
+    "resetFailed": "रीसेट विफल",
+    "checkEmail": "अपना ईमेल जांचें",
+    "resetLinkSent": "पासवर्ड रीसेट लिंक आपके ईमेल पर भेज दिया गया है।"
+  },
+  "notFound": {
+    "title": "404",
+    "message": "उफ़! पृष्ठ नहीं मिला",
+    "returnHome": "होम पर वापस जाएं"
   }
 }

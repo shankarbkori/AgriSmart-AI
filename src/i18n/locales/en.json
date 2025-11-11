@@ -124,5 +124,34 @@
   "common": {
     "locationFetched": "Location data fetched successfully",
     "locationError": "Failed to fetch location data"
+  },
+  "auth": {
+    "title": "AgriSmart AI",
+    "subtitle": "Sign in to access agricultural insights and tools",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "email": "Email",
+    "password": "Password",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "Signing in...",
+    "creatingAccount": "Creating account...",
+    "createAccount": "Create Account",
+    "forgotPassword": "Forgot password?",
+    "minCharacters": "Minimum 6 characters",
+    "signUpFailed": "Sign up failed",
+    "accountCreated": "Account created successfully!",
+    "canNowLogin": "You can now log in with your credentials.",
+    "loginFailed": "Login failed",
+    "emailRequired": "Email required",
+    "emailRequiredDesc": "Please enter your email address to reset password.",
+    "resetFailed": "Reset failed",
+    "checkEmail": "Check your email",
+    "resetLinkSent": "Password reset link has been sent to your email."
+  },
+  "notFound": {
+    "title": "404",
+    "message": "Oops! Page not found",
+    "returnHome": "Return to Home"
   }
 }

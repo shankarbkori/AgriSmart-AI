@@ -73,5 +73,34 @@
   "common": {
     "locationFetched": "સ્થાન ડેટા સફળતાપૂર્વક મેળવ્યો",
     "locationError": "સ્થાન ડેટા મેળવવામાં નિષ્ફળ"
+  },
+  "auth": {
+    "title": "એગ્રિસ્માર્ટ AI",
+    "subtitle": "કૃષિ આંતરદૃષ્ટિ અને સાધનોને એક્સેસ કરવા માટે સાઇન ઇન કરો",
+    "signIn": "સાઇન ઇન",
+    "signUp": "સાઇન અપ",
+    "email": "ઇમેઇલ",
+    "password": "પાસવર્ડ",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "સાઇન ઇન થઈ રહ્યું છે...",
+    "creatingAccount": "એકાઉન્ટ બનાવી રહ્યા છીએ...",
+    "createAccount": "એકાઉન્ટ બનાવો",
+    "forgotPassword": "પાસવર્ડ ભૂલી ગયા?",
+    "minCharacters": "ઓછામાં ઓછા 6 અક્ષરો",
+    "signUpFailed": "સાઇન અપ નિષ્ફળ",
+    "accountCreated": "એકાઉન્ટ સફળતાપૂર્વક બનાવ્યું!",
+    "canNowLogin": "તમે હવે તમારા ક્રેડેન્શિયલ્સ સાથે લોગ ઇન કરી શકો છો.",
+    "loginFailed": "લોગિન નિષ્ફળ",
+    "emailRequired": "ઇમેઇલ જરૂરી છે",
+    "emailRequiredDesc": "પાસવર્ડ રીસેટ કરવા માટે કૃપા કરીને તમારું ઇમેઇલ સરનામું દાખલ કરો.",
+    "resetFailed": "રીસેટ નિષ્ફળ",
+    "checkEmail": "તમારું ઇમેઇલ તપાસો",
+    "resetLinkSent": "પાસવર્ડ રીસેટ લિંક તમારા ઇમેઇલ પર મોકલી દેવામાં આવી છે."
+  },
+  "notFound": {
+    "title": "404",
+    "message": "અરેરે! પૃષ્ઠ મળ્યું નથી",
+    "returnHome": "હોમ પર પાછા ફરો"
   }
 }

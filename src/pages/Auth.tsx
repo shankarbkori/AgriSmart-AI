@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,8 +9,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Sprout } from "lucide-react";
+import { LanguageSelector } from "@/components/LanguageSelector";
 
 const Auth = () => {
+  const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -50,14 +53,14 @@ const Auth = () => {
 
     if (error) {
       toast({
-        title: "Sign up failed",
+        title: t("auth.signUpFailed"),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Account created successfully!",
-        description: "You can now log in with your credentials.",
+        title: t("auth.accountCreated"),
+        description: t("auth.canNowLogin"),
       });
     }
   };
@@ -75,7 +78,7 @@ const Auth = () => {
 
     if (error) {
       toast({
-        title: "Login failed",
+        title: t("auth.loginFailed"),
         description: error.message,
         variant: "destructive",
       });
@@ -85,8 +88,8 @@ const Auth = () => {
   const handleResetPassword = async () => {
     if (!email) {
       toast({
-        title: "Email required",
-        description: "Please enter your email address to reset password.",
+        title: t("auth.emailRequired"),
+        description: t("auth.emailRequiredDesc"),
         variant: "destructive",
       });
       return;
@@ -98,20 +101,23 @@ const Auth = () => {
 
     if (error) {
       toast({
-        title: "Reset failed",
+        title: t("auth.resetFailed"),
         description: error.message,
         variant: "destructive",
       });
     } else {
       toast({
-        title: "Check your email",
-        description: "Password reset link has been sent to your email.",
+        title: t("auth.checkEmail"),
+        description: t("auth.resetLinkSent"),
       });
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-background via-background to-primary/5 p-4">
+      <div className="absolute top-4 right-4">
+        <LanguageSelector />
+      </div>
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
@@ -119,26 +125,26 @@ const Auth = () => {
               <Sprout className="h-8 w-8 text-primary" />
             </div>
           </div>
-          <CardTitle className="text-2xl font-bold">AgriSmart AI</CardTitle>
+          <CardTitle className="text-2xl font-bold">{t("auth.title")}</CardTitle>
           <CardDescription>
-            Sign in to access agricultural insights and tools
+            {t("auth.subtitle")}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue="signin" className="w-full">
             <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="signin">Sign In</TabsTrigger>
-              <TabsTrigger value="signup">Sign Up</TabsTrigger>
+              <TabsTrigger value="signin">{t("auth.signIn")}</TabsTrigger>
+              <TabsTrigger value="signup">{t("auth.signUp")}</TabsTrigger>
             </TabsList>
 
             <TabsContent value="signin">
               <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signin-email">Email</Label>
+                  <Label htmlFor="signin-email">{t("auth.email")}</Label>
                   <Input
                     id="signin-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t("auth.emailPlaceholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -146,11 +152,11 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signin-password">Password</Label>
+                  <Label htmlFor="signin-password">{t("auth.password")}</Label>
                   <Input
                     id="signin-password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder={t("auth.passwordPlaceholder")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -166,10 +172,10 @@ const Auth = () => {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Signing in...
+                      {t("auth.signingIn")}
                     </>
                   ) : (
-                    "Sign In"
+                    t("auth.signIn")
                   )}
                 </Button>
                 <Button
@@ -179,7 +185,7 @@ const Auth = () => {
                   onClick={handleResetPassword}
                   disabled={isLoading}
                 >
-                  Forgot password?
+                  {t("auth.forgotPassword")}
                 </Button>
               </form>
             </TabsContent>
@@ -187,11 +193,11 @@ const Auth = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-email">Email</Label>
+                  <Label htmlFor="signup-email">{t("auth.email")}</Label>
                   <Input
                     id="signup-email"
                     type="email"
-                    placeholder="you@example.com"
+                    placeholder={t("auth.emailPlaceholder")}
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -199,11 +205,11 @@ const Auth = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Password</Label>
+                  <Label htmlFor="signup-password">{t("auth.password")}</Label>
                   <Input
                     id="signup-password"
                     type="password"
-                    placeholder="••••••••"
+                    placeholder={t("auth.passwordPlaceholder")}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
@@ -211,7 +217,7 @@ const Auth = () => {
                     minLength={6}
                   />
                   <p className="text-xs text-muted-foreground">
-                    Minimum 6 characters
+                    {t("auth.minCharacters")}
                   </p>
                 </div>
                 <Button
@@ -222,10 +228,10 @@ const Auth = () => {
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Creating account...
+                      {t("auth.creatingAccount")}
                     </>
                   ) : (
-                    "Create Account"
+                    t("auth.createAccount")
                   )}
                 </Button>
               </form>

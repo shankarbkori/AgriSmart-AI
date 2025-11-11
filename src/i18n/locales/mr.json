@@ -71,7 +71,36 @@
     "suggestions": "चांगल्या परिणामांसाठी सूचना"
   },
   "common": {
-    "locationFetched": "स्थान डेटा यशस्वीरित्या मिळविला",
-    "locationError": "स्थान डेटा मिळविण्यात अयशस्वी"
+    "locationFetched": "स्थान डेटा यशस्वीरित्या मिळवला",
+    "locationError": "स्थान डेटा मिळवण्यात अयशस्वी"
+  },
+  "auth": {
+    "title": "एग्रीस्मार्ट AI",
+    "subtitle": "कृषी अंतर्दृष्टी आणि साधनांमध्ये प्रवेश करण्यासाठी साइन इन करा",
+    "signIn": "साइन इन",
+    "signUp": "साइन अप",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "••••••••",
+    "signingIn": "साइन इन होत आहे...",
+    "creatingAccount": "खाते तयार होत आहे...",
+    "createAccount": "खाते तयार करा",
+    "forgotPassword": "पासवर्ड विसरलात?",
+    "minCharacters": "किमान 6 वर्ण",
+    "signUpFailed": "साइन अप अयशस्वी",
+    "accountCreated": "खाते यशस्वीरित्या तयार केले!",
+    "canNowLogin": "आता तुम्ही तुमच्या क्रेडेन्शियल्ससह लॉगिन करू शकता.",
+    "loginFailed": "लॉगिन अयशस्वी",
+    "emailRequired": "ईमेल आवश्यक आहे",
+    "emailRequiredDesc": "पासवर्ड रीसेट करण्यासाठी कृपया तुमचा ईमेल पत्ता प्रविष्ट करा.",
+    "resetFailed": "रीसेट अयशस्वी",
+    "checkEmail": "तुमचा ईमेल तपासा",
+    "resetLinkSent": "पासवर्ड रीसेट लिंक तुमच्या ईमेलवर पाठवली आहे."
+  },
+  "notFound": {
+    "title": "404",
+    "message": "अरेरे! पृष्ठ सापडले नाही",
+    "returnHome": "मुख्यपृष्ठावर परत या"
   }
 }
