@@ -170,7 +170,47 @@ serve(async (req) => {
   }
 
   try {
-    const { image } = await req.json();
+    const { image, disease, confidence, cnn_analysis, original_label } = await req.json();
+
+    // If this is a CNN analysis request with disease already detected
+    if (cnn_analysis && disease) {
+      console.log(`CNN detected disease: ${disease} (${original_label}) with confidence: ${confidence}`);
+      
+      // Get disease details from database
+      const diseaseInfo = diseaseDatabase[disease as keyof typeof diseaseDatabase] || diseaseDatabase['Healthy'];
+      
+      // Add helpful suggestions based on result
+      const suggestions = [
+        'CNN model analyzed image successfully using MobileNetV2 architecture',
+        'Take photos in good lighting conditions for better accuracy',
+        'Capture close-up images of affected areas showing symptoms clearly',
+        'Ensure the affected area is clearly visible in the frame'
+      ];
+      
+      return new Response(
+        JSON.stringify({
+          disease: disease,
+          confidence: confidence,
+          severity: diseaseInfo.severity,
+          description: diseaseInfo.description,
+          treatment: diseaseInfo.treatment,
+          pesticides: diseaseInfo.pesticides || [],
+          fertilizers: diseaseInfo.fertilizers || [],
+          applicationTiming: diseaseInfo.applicationTiming || 'Follow product label instructions',
+          preventiveMeasures: diseaseInfo.preventiveMeasures || 'Maintain good plant health practices',
+          suggestions,
+          timestamp: new Date().toISOString(),
+          analysisMethod: 'CNN (MobileNetV2)',
+          originalLabel: original_label
+        }),
+        { 
+          status: 200,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' }
+        }
+      );
+    }
+
+    // Legacy AI-based analysis (fallback if needed)
     console.log('Detecting disease in uploaded image using AI vision');
 
     if (!image) {
