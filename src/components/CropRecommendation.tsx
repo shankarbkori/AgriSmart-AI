@@ -31,6 +31,28 @@ const CropRecommendation = () => {
     season: "",
   });
 
+  const detectSeason = (latitude: number) => {
+    const month = new Date().getMonth(); // 0-11
+    const isNorthern = latitude >= 0;
+    
+    // For Indian subcontinent (special monsoon season)
+    if (latitude >= 8 && latitude <= 35 && month >= 5 && month <= 8) {
+      return "monsoon";
+    }
+    
+    if (isNorthern) {
+      if (month >= 11 || month <= 1) return "winter";
+      if (month >= 2 && month <= 4) return "spring";
+      if (month >= 5 && month <= 7) return "summer";
+      return "autumn";
+    } else {
+      if (month >= 11 || month <= 1) return "summer";
+      if (month >= 2 && month <= 4) return "autumn";
+      if (month >= 5 && month <= 7) return "winter";
+      return "spring";
+    }
+  };
+
   const fetchLocationData = async () => {
     setFetchingLocation(true);
     try {
@@ -46,15 +68,27 @@ const CropRecommendation = () => {
 
       if (error) throw error;
 
+      // Calculate average monthly rainfall
+      let avgRainfall = 75; // default
+      if (data.monthlyRainfall && Array.isArray(data.monthlyRainfall)) {
+        const total = data.monthlyRainfall.reduce((sum: number, item: any) => sum + item.rainfall, 0);
+        avgRainfall = Math.round(total / data.monthlyRainfall.length);
+      }
+
+      const season = detectSeason(latitude);
+
       setFormData(prev => ({
         ...prev,
         temperature: data.temperature.toString(),
         humidity: data.humidity.toString(),
+        rainfall: avgRainfall.toString(),
+        ph: "6.5", // Neutral pH as default
+        season: season,
       }));
 
       toast({
         title: "Location Data Loaded",
-        description: "Weather data has been auto-populated based on your location.",
+        description: "Weather data, rainfall, pH, and season auto-populated based on your location.",
       });
     } catch (error) {
       console.error("Location error:", error);
@@ -174,7 +208,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="temperature">Temperature (°C)</Label>
+              <Label htmlFor="temperature">Temperature (°C) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="temperature"
                 type="number"
@@ -187,7 +221,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="humidity">Humidity (%)</Label>
+              <Label htmlFor="humidity">Humidity (%) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="humidity"
                 type="number"
@@ -200,7 +234,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ph">Soil pH</Label>
+              <Label htmlFor="ph">Soil pH <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="ph"
                 type="number"
@@ -213,7 +247,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rainfall">Rainfall (mm)</Label>
+              <Label htmlFor="rainfall">Rainfall (mm) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="rainfall"
                 type="number"
@@ -226,7 +260,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="season">Season</Label>
+              <Label htmlFor="season">Season <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Select
                 value={formData.season}
                 onValueChange={(value) => setFormData({ ...formData, season: value })}
