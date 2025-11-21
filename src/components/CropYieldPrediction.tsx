@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, TrendingUp, MapPin } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 const CropYieldPrediction = () => {
   const { toast } = useToast();
@@ -38,15 +39,23 @@ const CropYieldPrediction = () => {
 
       if (error) throw error;
 
+      // Calculate average monthly rainfall
+      let avgRainfall = 75; // default
+      if (data.monthlyRainfall && Array.isArray(data.monthlyRainfall)) {
+        const total = data.monthlyRainfall.reduce((sum: number, item: any) => sum + item.rainfall, 0);
+        avgRainfall = Math.round(total / data.monthlyRainfall.length);
+      }
+
       setFormData(prev => ({
         ...prev,
         temperature: data.temperature.toString(),
         humidity: data.humidity.toString(),
+        rainfall: avgRainfall.toString(),
       }));
 
       toast({
-        title: "Location data fetched successfully",
-        description: "Location data fetched successfully",
+        title: "Location Data Loaded",
+        description: "Weather data and rainfall auto-populated based on your location.",
       });
     } catch (error) {
       console.error("Location error:", error);
@@ -187,7 +196,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rainfall">Rainfall (mm)</Label>
+              <Label htmlFor="rainfall">Rainfall (mm) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="rainfall"
                 type="number"
@@ -226,7 +235,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="temperature">Avg Temperature (°C)</Label>
+              <Label htmlFor="temperature">Avg Temperature (°C) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="temperature"
                 type="number"
@@ -239,7 +248,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="humidity">Humidity (%)</Label>
+              <Label htmlFor="humidity">Humidity (%) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
               <Input
                 id="humidity"
                 type="number"
