@@ -93,13 +93,13 @@ const CropRecommendation = () => {
         temperature: data.temperature.toString(),
         humidity: data.humidity.toString(),
         rainfall: avgRainfall.toString(),
-        ph: "6.5", // Neutral pH as default
+        ph: data.ph ? data.ph.toString() : "6.5", // Use estimated pH from location
         season: season,
       }));
 
       toast({
         title: "Location Data Loaded",
-        description: "Weather data, rainfall, pH, and season auto-populated based on your location.",
+        description: `Weather data auto-populated. Estimated soil pH: ${data.ph || 6.5} (based on your climate zone)`,
       });
     } catch (error) {
       console.error("Location error:", error);

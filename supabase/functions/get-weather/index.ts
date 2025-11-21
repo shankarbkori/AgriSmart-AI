@@ -5,6 +5,47 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Estimate soil pH based on climate zone and location
+function estimateSoilPH(lat: number, lon: number, rainfall: number, temperature: number): number {
+  let pH = 6.5; // Neutral default
+  
+  // High rainfall regions (tropical/monsoon) - more acidic
+  if (rainfall > 1500) {
+    pH = 5.8; // Acidic due to leaching
+  }
+  // Moderate rainfall (temperate) - neutral to slightly acidic
+  else if (rainfall > 800) {
+    pH = 6.5; // Neutral
+  }
+  // Low rainfall (arid/semi-arid) - alkaline
+  else if (rainfall < 500) {
+    pH = 7.5; // Alkaline
+  }
+  // Moderate-low rainfall
+  else {
+    pH = 7.0; // Slightly alkaline
+  }
+  
+  // Adjust for specific regions
+  // Tropical regions (between tropics) - more acidic
+  if (lat >= -23.5 && lat <= 23.5) {
+    pH = Math.max(5.5, pH - 0.5);
+  }
+  
+  // Desert belts - more alkaline
+  if (lat >= 15 && lat <= 35 && ((lon >= -20 && lon <= 60) || (lon >= -120 && lon <= -100))) {
+    pH = Math.min(8.0, pH + 0.5);
+  }
+  
+  // High temperature regions tend toward alkaline
+  if (temperature > 30) {
+    pH = Math.min(8.0, pH + 0.3);
+  }
+  
+  // Round to 1 decimal place
+  return Math.round(pH * 10) / 10;
+}
+
 // Fetch historical rainfall data from Open-Meteo (free, no API key required)
 async function fetchRainfallData(lat: number, lon: number): Promise<{ month: string; rainfall: number }[]> {
   try {
@@ -93,9 +134,14 @@ serve(async (req) => {
       if (mockHumidity < 40) annualRainfall *= 0.6;
       else if (mockHumidity > 70) annualRainfall *= 1.2;
 
+      const mockLat = typeof lat === 'number' ? lat : 20;
+      const mockLon = typeof lon === 'number' ? lon : 75;
+      const mockTemp = 25;
+      const estimatedPH = estimateSoilPH(mockLat, mockLon, annualRainfall, mockTemp);
+      
       const mockData = {
         location: location || (typeof lat === 'number' && typeof lon === 'number' ? `${lat},${lon}` : 'Current Location'),
-        temperature: 25,
+        temperature: mockTemp,
         feelsLike: 27,
         humidity: mockHumidity,
         pressure: 1013,
@@ -104,6 +150,7 @@ serve(async (req) => {
         visibility: 10000,
         cloudCover: 40,
         rainfall: Math.round(annualRainfall),
+        ph: estimatedPH,
         source: 'mock',
       };
       
@@ -140,9 +187,14 @@ serve(async (req) => {
         if (mockHumidity < 40) annualRainfall *= 0.6;
         else if (mockHumidity > 70) annualRainfall *= 1.2;
 
+        const mockLat = typeof lat === 'number' ? lat : 20;
+        const mockLon = typeof lon === 'number' ? lon : 75;
+        const mockTemp = 25;
+        const estimatedPH = estimateSoilPH(mockLat, mockLon, annualRainfall, mockTemp);
+        
         const mockData = {
           location: location || (lat && lon ? `${lat},${lon}` : 'Current Location'),
-          temperature: 25,
+          temperature: mockTemp,
           feelsLike: 27,
           humidity: mockHumidity,
           pressure: 1013,
@@ -151,6 +203,7 @@ serve(async (req) => {
           visibility: 10000,
           cloudCover: 40,
           rainfall: Math.round(annualRainfall),
+          ph: estimatedPH,
           source: 'mock',
           note: response.status === 401
             ? 'Invalid or inactive OpenWeather API key. Returning mock data.'
@@ -220,6 +273,12 @@ serve(async (req) => {
       }));
     }
 
+    // Calculate total rainfall from monthly data
+    const totalRainfall = monthlyRainfall.reduce((sum, item) => sum + item.rainfall, 0);
+    
+    // Estimate soil pH based on location and climate
+    const estimatedPH = estimateSoilPH(coordLat, coordLon, totalRainfall, Math.round(data.main.temp));
+    
     const weatherData = {
       location: data.name,
       temperature: Math.round(data.main.temp),
@@ -231,6 +290,7 @@ serve(async (req) => {
       visibility: data.visibility,
       cloudCover: data.clouds.all,
       monthlyRainfall: monthlyRainfall, // Monthly rainfall data
+      ph: estimatedPH, // Estimated soil pH
       coordinates: { lat: coordLat, lon: coordLon },
     };
 
