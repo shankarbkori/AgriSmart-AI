@@ -61,11 +61,10 @@ const DiseaseDetection = () => {
 
       console.log("Loading CNN image classification model...");
       
-      // Load the CNN image classification model
+      // Load the CNN image classification model (CPU inference)
       const classifier = await pipeline(
         'image-classification',
-        'linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification',
-        { device: 'webgpu' }
+        'linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification'
       );
 
       toast({
