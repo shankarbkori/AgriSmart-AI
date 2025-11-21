@@ -32,21 +32,32 @@ const CropRecommendation = () => {
   });
 
   const detectSeason = (latitude: number) => {
-    const month = new Date().getMonth(); // 0-11
+    const month = new Date().getMonth(); // 0-11 (Jan=0, Dec=11)
     const isNorthern = latitude >= 0;
     
-    // For Indian subcontinent (special monsoon season)
-    if (latitude >= 8 && latitude <= 35 && month >= 5 && month <= 8) {
-      return "monsoon";
+    // For Indian subcontinent - use agricultural seasons
+    if (latitude >= 8 && latitude <= 37) {
+      // Monsoon/Kharif: June to September (months 5-8)
+      if (month >= 5 && month <= 8) return "monsoon";
+      // Winter/Rabi: October to February (months 9-11, 0-1)
+      if (month >= 9 || month <= 1) return "winter";
+      // Summer/Zaid: March to May (months 2-4)
+      return "summer";
     }
     
+    // For other regions - standard meteorological seasons
     if (isNorthern) {
-      if (month >= 11 || month <= 1) return "winter";
+      // Winter: Dec, Jan, Feb (months 11, 0, 1)
+      if (month === 11 || month <= 1) return "winter";
+      // Spring: Mar, Apr, May (months 2, 3, 4)
       if (month >= 2 && month <= 4) return "spring";
+      // Summer: Jun, Jul, Aug (months 5, 6, 7)
       if (month >= 5 && month <= 7) return "summer";
+      // Autumn: Sep, Oct, Nov (months 8, 9, 10)
       return "autumn";
     } else {
-      if (month >= 11 || month <= 1) return "summer";
+      // Southern hemisphere (reversed)
+      if (month === 11 || month <= 1) return "summer";
       if (month >= 2 && month <= 4) return "autumn";
       if (month >= 5 && month <= 7) return "winter";
       return "spring";
