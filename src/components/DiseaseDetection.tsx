@@ -5,7 +5,6 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, AlertCircle, Upload, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { pipeline } from "@huggingface/transformers";
 
 interface DiseaseResult {
   disease: string;
@@ -54,77 +53,18 @@ const DiseaseDetection = () => {
     setLoading(true);
 
     try {
-      toast({
-        title: "Loading CNN Model",
-        description: "Initializing plant disease detection model...",
+      // Convert file to base64
+      const base64Image = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(selectedFile);
       });
 
-      console.log("Loading CNN image classification model...");
+      console.log("Sending image to detect-disease function...");
       
-      // Load the CNN image classification model (CPU inference)
-      const classifier = await pipeline(
-        'image-classification',
-        'linkanjarad/mobilenet_v2_1.0_224-plant-disease-identification'
-      );
-
-      toast({
-        title: "Analyzing Image",
-        description: "Running CNN analysis on your plant image...",
-      });
-
-      console.log("Running CNN classification on image...");
-
-      // Classify the image using the uploaded file
-      const predictions = await classifier(previewUrl);
-
-      if (!predictions || predictions.length === 0) {
-        throw new Error('No predictions returned from CNN model');
-      }
-
-      console.log("CNN predictions:", predictions);
-
-      // Extract top prediction with proper typing
-      const result = Array.isArray(predictions) ? predictions : [predictions];
-      const topPrediction = result[0] as { label: string; score: number };
-      
-      // Map the prediction label to our disease database format
-      const diseaseMapping: Record<string, string> = {
-        'powdery': 'Powdery Mildew',
-        'mildew': 'Powdery Mildew',
-        'blight': 'Leaf Blight',
-        'leaf_spot': 'Leaf Blight',
-        'spot': 'Leaf Blight',
-        'rust': 'Rust',
-        'bacterial': 'Bacterial Wilt',
-        'wilt': 'Bacterial Wilt',
-        'mosaic': 'Mosaic Virus',
-        'virus': 'Mosaic Virus',
-        'rot': 'Root Rot',
-        'anthracnose': 'Anthracnose',
-        'healthy': 'Healthy'
-      };
-
-      // Find matching disease name from CNN output
-      let detectedDisease = 'Leaf Blight'; // default
-      const labelLower = topPrediction.label.toLowerCase();
-      
-      for (const [key, value] of Object.entries(diseaseMapping)) {
-        if (labelLower.includes(key)) {
-          detectedDisease = value;
-          break;
-        }
-      }
-
-      console.log("Mapped disease:", detectedDisease, "from label:", topPrediction.label);
-
-      // Call edge function to get detailed treatment info
-      const { data, error } = await supabase.functions.invoke('detect-disease', {
-        body: { 
-          disease: detectedDisease,
-          confidence: topPrediction.score,
-          cnn_analysis: true,
-          original_label: topPrediction.label
-        }
+      const { data, error } = await supabase.functions.invoke("detect-disease", {
+        body: { image: base64Image },
       });
 
       if (error) {
@@ -135,14 +75,14 @@ const DiseaseDetection = () => {
       console.log("Disease detection result:", data);
       setResult(data);
       toast({
-        title: "CNN Analysis Complete",
-        description: `Detected: ${data.disease} with ${(data.confidence * 100).toFixed(1)}% confidence`,
+        title: "Analysis Complete",
+        description: `Disease detected: ${data.disease}`,
       });
     } catch (error) {
       console.error("Disease detection error:", error);
       toast({
         title: "Analysis Failed",
-        description: error instanceof Error ? error.message : "Failed to analyze image. Ensure WebGPU is supported in your browser.",
+        description: error instanceof Error ? error.message : "Analysis Failed",
         variant: "destructive",
       });
     } finally {
@@ -171,7 +111,7 @@ const DiseaseDetection = () => {
           Crop Disease Detection
         </CardTitle>
         <CardDescription>
-          Upload a plant image to detect diseases using MobileNetV2 CNN model trained on plant diseases
+          Upload a plant image to detect diseases using AI vision analysis
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -231,9 +171,11 @@ const DiseaseDetection = () => {
                     <Badge variant="outline">
                       {(result.confidence * 100).toFixed(1)}% confidence
                     </Badge>
-                    <Badge variant="secondary" className="text-xs">
-                      CNN Analysis
-                    </Badge>
+                    {result.analysisMethod && (
+                      <Badge variant="secondary" className="text-xs">
+                        {result.analysisMethod}
+                      </Badge>
+                    )}
                   </div>
                 </div>
                 {result.disease.toLowerCase() === "healthy" ? (
