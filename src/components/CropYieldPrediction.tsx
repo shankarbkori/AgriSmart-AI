@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,7 +10,6 @@ import { Loader2, TrendingUp, MapPin } from "lucide-react";
 
 const CropYieldPrediction = () => {
   const { toast } = useToast();
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [fetchingLocation, setFetchingLocation] = useState(false);
   const [prediction, setPrediction] = useState<number | null>(null);
@@ -47,14 +45,14 @@ const CropYieldPrediction = () => {
       }));
 
       toast({
-        title: t('common.locationFetched'),
-        description: t('common.locationFetched'),
+        title: "Location data fetched successfully",
+        description: "Location data fetched successfully",
       });
     } catch (error) {
       console.error("Location error:", error);
       toast({
-        title: t('yieldPrediction.locationAccessFailed'),
-        description: t('yieldPrediction.enterManually'),
+        title: "Location Access Failed",
+        description: "Unable to fetch location data. Please enter values manually.",
         variant: "destructive",
       });
     } finally {
@@ -80,14 +78,14 @@ const CropYieldPrediction = () => {
 
       setPrediction(data.predictedYield);
       toast({
-        title: t('yieldPrediction.predictionComplete'),
-        description: t('yieldPrediction.estimatedYieldMsg').replace('{yield}', data.predictedYield.toFixed(2)),
+        title: "Prediction Complete",
+        description: `Estimated yield: ${data.predictedYield.toFixed(2)} tons`,
       });
     } catch (error) {
       console.error("Prediction error:", error);
       toast({
-        title: t('yieldPrediction.predictionFailed'),
-        description: t('yieldPrediction.unableToPredict'),
+        title: "Prediction Failed",
+        description: "Unable to predict crop yield. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -102,10 +100,10 @@ const CropYieldPrediction = () => {
           <div>
             <CardTitle className="flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-primary" />
-              {t('yieldPrediction.title')}
+              Crop Yield Prediction
             </CardTitle>
             <CardDescription>
-              {t('yieldPrediction.description')}
+              Predict crop production using machine learning based on environmental and farming parameters
             </CardDescription>
           </div>
           <Button
@@ -119,7 +117,7 @@ const CropYieldPrediction = () => {
             ) : (
               <>
                 <MapPin className="h-4 w-4 mr-2" />
-                {t('yieldPrediction.refreshLocation')}
+                Refresh Location
               </>
             )}
           </Button>
@@ -129,14 +127,14 @@ const CropYieldPrediction = () => {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="cropType">{t('yieldPrediction.cropType')}</Label>
+              <Label htmlFor="cropType">Crop Type</Label>
               <Select
                 value={formData.cropType}
                 onValueChange={(value) => setFormData({ ...formData, cropType: value })}
                 required
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={t('yieldPrediction.selectCrop')} />
+                  <SelectValue placeholder="Select crop type" />
                 </SelectTrigger>
                 <SelectContent className="max-h-[300px]">
                   <SelectItem value="rice">Rice</SelectItem>
@@ -176,7 +174,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="area">{t('yieldPrediction.area')}</Label>
+              <Label htmlFor="area">Area (hectares)</Label>
               <Input
                 id="area"
                 type="number"
@@ -189,7 +187,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rainfall">{t('yieldPrediction.rainfall')}</Label>
+              <Label htmlFor="rainfall">Rainfall (mm)</Label>
               <Input
                 id="rainfall"
                 type="number"
@@ -202,7 +200,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="fertilizer">{t('yieldPrediction.fertilizer')}</Label>
+              <Label htmlFor="fertilizer">Fertilizer (kg)</Label>
               <Input
                 id="fertilizer"
                 type="number"
@@ -215,7 +213,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="pesticide">{t('yieldPrediction.pesticide')}</Label>
+              <Label htmlFor="pesticide">Pesticide (kg)</Label>
               <Input
                 id="pesticide"
                 type="number"
@@ -228,7 +226,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="temperature">{t('yieldPrediction.temperature')}</Label>
+              <Label htmlFor="temperature">Avg Temperature (°C)</Label>
               <Input
                 id="temperature"
                 type="number"
@@ -241,7 +239,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="humidity">{t('yieldPrediction.humidity')}</Label>
+              <Label htmlFor="humidity">Humidity (%)</Label>
               <Input
                 id="humidity"
                 type="number"
@@ -258,22 +256,22 @@ const CropYieldPrediction = () => {
             {loading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                {t('yieldPrediction.predicting')}
+                Predicting...
               </>
             ) : (
-              t('yieldPrediction.predictYield')
+              "Predict Yield"
             )}
           </Button>
         </form>
 
         {prediction !== null && (
           <div className="mt-6 p-4 bg-primary/10 rounded-lg border border-primary/20">
-            <h3 className="font-semibold text-lg mb-2">{t('yieldPrediction.predictionResult')}</h3>
+            <h3 className="font-semibold text-lg mb-2">Prediction Result</h3>
             <p className="text-2xl font-bold text-primary">
-              {prediction.toFixed(2)} {t('yieldPrediction.tons')}
+              {prediction.toFixed(2)} tons
             </p>
             <p className="text-sm text-muted-foreground mt-1">
-              {t('yieldPrediction.estimatedYield')}
+              Estimated crop yield based on provided parameters
             </p>
           </div>
         )}

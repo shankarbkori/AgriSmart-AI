@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
 import { supabase } from "@/integrations/supabase/client";
 import { User } from "@supabase/supabase-js";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -10,11 +9,9 @@ import CropYieldPrediction from "@/components/CropYieldPrediction";
 import CropRecommendation from "@/components/CropRecommendation";
 import WeatherDashboard from "@/components/WeatherDashboard";
 import DiseaseDetection from "@/components/DiseaseDetection";
-import { LanguageSelector } from "@/components/LanguageSelector";
 import { useToast } from "@/hooks/use-toast";
 
 const Index = () => {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const { toast } = useToast();
   const [user, setUser] = useState<User | null>(null);
@@ -75,12 +72,11 @@ const Index = () => {
             <div className="flex items-center gap-3">
               <Sprout className="h-8 w-8 text-primary" />
               <div>
-                <h1 className="text-2xl font-bold text-foreground">{t('app.title')}</h1>
-                <p className="text-sm text-muted-foreground">{t('app.subtitle')}</p>
+                <h1 className="text-2xl font-bold text-foreground">AgriSmart AI</h1>
+                <p className="text-sm text-muted-foreground">Advanced Agricultural Intelligence System</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <LanguageSelector />
               <Button
                 variant="outline"
                 size="sm"
@@ -100,22 +96,22 @@ const Index = () => {
           <TabsList className="grid w-full grid-cols-4 mb-8">
             <TabsTrigger value="yield" className="flex items-center gap-2">
               <BarChart3 className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('tabs.yieldPrediction')}</span>
+              <span className="hidden sm:inline">Yield Prediction</span>
               <span className="sm:hidden">Yield</span>
             </TabsTrigger>
             <TabsTrigger value="recommendation" className="flex items-center gap-2">
               <Sprout className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('tabs.cropRecommendation')}</span>
+              <span className="hidden sm:inline">Crop Recommendation</span>
               <span className="sm:hidden">Crops</span>
             </TabsTrigger>
             <TabsTrigger value="weather" className="flex items-center gap-2">
               <Cloud className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('tabs.weather')}</span>
+              <span className="hidden sm:inline">Weather Dashboard</span>
               <span className="sm:hidden">Weather</span>
             </TabsTrigger>
             <TabsTrigger value="disease" className="flex items-center gap-2">
               <AlertCircle className="h-4 w-4" />
-              <span className="hidden sm:inline">{t('tabs.diseaseDetection')}</span>
+              <span className="hidden sm:inline">Disease Detection</span>
               <span className="sm:hidden">Disease</span>
             </TabsTrigger>
           </TabsList>
