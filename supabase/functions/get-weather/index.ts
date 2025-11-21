@@ -5,8 +5,8 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Fetch historical rainfall data from Visual Crossing (monthly)
-async function fetchRainfallData(lat: number, lon: number, apiKey: string): Promise<{ month: string; rainfall: number }[]> {
+// Fetch historical rainfall data from Open-Meteo (free, no API key required)
+async function fetchRainfallData(lat: number, lon: number): Promise<{ month: string; rainfall: number }[]> {
   try {
     // Get last 12 months of data
     const endDate = new Date();
@@ -16,13 +16,13 @@ async function fetchRainfallData(lat: number, lon: number, apiKey: string): Prom
     const startStr = startDate.toISOString().split('T')[0];
     const endStr = endDate.toISOString().split('T')[0];
     
-    const url = `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${lat},${lon}/${startStr}/${endStr}?unitGroup=metric&include=days&key=${apiKey}&contentType=json`;
+    const url = `https://archive-api.open-meteo.com/v1/archive?latitude=${lat}&longitude=${lon}&start_date=${startStr}&end_date=${endStr}&daily=precipitation_sum&timezone=auto`;
     
-    console.log('Fetching rainfall from Visual Crossing...');
+    console.log('Fetching rainfall from Open-Meteo (free API)...');
     const response = await fetch(url);
     
     if (!response.ok) {
-      console.error('Visual Crossing API error:', response.status);
+      console.error('Open-Meteo API error:', response.status);
       return []; // Return empty array to indicate failure
     }
     
@@ -31,17 +31,18 @@ async function fetchRainfallData(lat: number, lon: number, apiKey: string): Prom
     // Calculate monthly rainfall
     const monthlyData: { [key: string]: number } = {};
     
-    if (data.days && Array.isArray(data.days)) {
-      data.days.forEach((day: any) => {
-        const date = new Date(day.datetime);
+    if (data.daily && data.daily.time && data.daily.precipitation_sum) {
+      data.daily.time.forEach((dateStr: string, index: number) => {
+        const date = new Date(dateStr);
         const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
         
         if (!monthlyData[monthKey]) {
           monthlyData[monthKey] = 0;
         }
         
-        if (day.precip) {
-          monthlyData[monthKey] += day.precip;
+        const precip = data.daily.precipitation_sum[index];
+        if (precip && precip > 0) {
+          monthlyData[monthKey] += precip;
         }
       });
     }
@@ -49,19 +50,19 @@ async function fetchRainfallData(lat: number, lon: number, apiKey: string): Prom
     // Convert to array and sort by date
     const monthlyArray = Object.entries(monthlyData)
       .map(([month, rainfall]) => ({
-        month: new Date(month + '-01').toLocaleString('default', { month: 'short', year: 'numeric' }),
+        month: new Date(month + '-01').toLocaleString('default', { month: 'short' }),
         rainfall: Math.round(rainfall)
       }))
       .sort((a, b) => {
-        const dateA = new Date(a.month);
-        const dateB = new Date(b.month);
-        return dateA.getTime() - dateB.getTime();
-      });
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        return months.indexOf(a.month) - months.indexOf(b.month);
+      })
+      .slice(-12); // Get last 12 months
     
-    console.log(`Monthly rainfall data fetched: ${monthlyArray.length} months`);
+    console.log(`Monthly rainfall data fetched from Open-Meteo: ${monthlyArray.length} months`);
     return monthlyArray;
   } catch (error) {
-    console.error('Error fetching rainfall data:', error);
+    console.error('Error fetching rainfall data from Open-Meteo:', error);
     return [];
   }
 }
@@ -76,7 +77,6 @@ serve(async (req) => {
     console.log('Fetching weather for:', location || `${lat},${lon}`);
 
     const openWeatherApiKey = Deno.env.get('OPENWEATHER_API_KEY')?.trim();
-    const visualCrossingApiKey = Deno.env.get('VISUAL_CROSSING_API_KEY')?.trim();
     
     if (!openWeatherApiKey) {
       // Return mock data if API key not configured
@@ -173,13 +173,11 @@ serve(async (req) => {
     const coordLat = data.coord.lat;
     const coordLon = data.coord.lon;
     
-    // Try to get accurate monthly rainfall from Visual Crossing
+    // Try to get accurate monthly rainfall from Open-Meteo (free, no API key needed)
     let monthlyRainfall: { month: string; rainfall: number }[] = [];
-    if (visualCrossingApiKey) {
-      monthlyRainfall = await fetchRainfallData(coordLat, coordLon, visualCrossingApiKey);
-    }
+    monthlyRainfall = await fetchRainfallData(coordLat, coordLon);
     
-    // If Visual Crossing failed or no API key, fall back to estimate
+    // If Open-Meteo failed, fall back to estimate
     if (monthlyRainfall.length === 0) {
       console.log('Using estimated monthly rainfall based on climate zones');
       let annualRainfall = 800; // Default moderate rainfall
