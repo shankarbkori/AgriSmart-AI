@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useTranslation } from "react-i18next";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -23,7 +22,6 @@ interface DiseaseResult {
 
 const DiseaseDetection = () => {
   const { toast } = useToast();
-  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>("");
@@ -45,8 +43,8 @@ const DiseaseDetection = () => {
   const handleAnalyze = async () => {
     if (!selectedFile) {
       toast({
-        title: t('disease.noImage'),
-        description: t('disease.noImageDesc'),
+        title: "No Image Selected",
+        description: "Please select a plant image to analyze",
         variant: "destructive",
       });
       return;
@@ -77,14 +75,14 @@ const DiseaseDetection = () => {
       console.log("Disease detection result:", data);
       setResult(data);
       toast({
-        title: t('disease.analysisComplete'),
-        description: `${t('disease.diseaseDetected')}: ${data.disease}`,
+        title: "Analysis Complete",
+        description: `Disease detected: ${data.disease}`,
       });
     } catch (error) {
       console.error("Disease detection error:", error);
       toast({
-        title: t('disease.analysisFailed'),
-        description: error instanceof Error ? error.message : t('disease.analysisFailed'),
+        title: "Analysis Failed",
+        description: error instanceof Error ? error.message : "Analysis Failed",
         variant: "destructive",
       });
     } finally {
@@ -110,10 +108,10 @@ const DiseaseDetection = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <AlertCircle className="h-5 w-5 text-primary" />
-          {t('disease.title')}
+          Crop Disease Detection
         </CardTitle>
         <CardDescription>
-          {t('disease.description')}
+          Upload a plant image to detect diseases using advanced CNN-based image analysis
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -129,8 +127,8 @@ const DiseaseDetection = () => {
             <label htmlFor="image-upload" className="cursor-pointer">
               <div className="flex flex-col items-center gap-2">
                 <Upload className="h-12 w-12 text-muted-foreground" />
-                <p className="text-sm font-medium">{t('disease.uploadImage')}</p>
-                <p className="text-xs text-muted-foreground">{t('disease.fileTypes')}</p>
+                <p className="text-sm font-medium">Click to upload plant image</p>
+                <p className="text-xs text-muted-foreground">PNG, JPG up to 10MB</p>
               </div>
             </label>
           </div>
@@ -152,10 +150,10 @@ const DiseaseDetection = () => {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t('disease.analyzing')}
+                    Analyzing...
                   </>
                 ) : (
-                  t('disease.analyzeImage')
+                  "Analyze Image"
                 )}
               </Button>
             </div>
@@ -168,10 +166,10 @@ const DiseaseDetection = () => {
                   <h3 className="text-xl font-semibold mb-1">{result.disease}</h3>
                   <div className="flex items-center gap-2 flex-wrap">
                     <Badge variant={getSeverityColor(result.severity)}>
-                      {result.severity} {t('disease.severity')}
+                      {result.severity} Severity
                     </Badge>
                     <Badge variant="outline">
-                      {(result.confidence * 100).toFixed(1)}% {t('disease.confidence')}
+                      {(result.confidence * 100).toFixed(1)}% confidence
                     </Badge>
                     {result.analysisMethod && (
                       <Badge variant="secondary" className="text-xs">
@@ -189,12 +187,12 @@ const DiseaseDetection = () => {
 
               <div className="space-y-3">
                 <div>
-                  <h4 className="font-semibold mb-1">{t('disease.description')}</h4>
+                  <h4 className="font-semibold mb-1">Description</h4>
                   <p className="text-sm text-muted-foreground">{result.description}</p>
                 </div>
 
                 <div>
-                  <h4 className="font-semibold mb-1">{t('disease.treatment')}</h4>
+                  <h4 className="font-semibold mb-1">Recommended Treatment</h4>
                   <p className="text-sm text-muted-foreground">{result.treatment}</p>
                 </div>
 
@@ -236,7 +234,7 @@ const DiseaseDetection = () => {
 
                 {result.suggestions && result.suggestions.length > 0 && (
                   <div>
-                    <h4 className="font-semibold mb-1">{t('disease.suggestions')}</h4>
+                    <h4 className="font-semibold mb-1">Suggestions for Better Results</h4>
                     <ul className="text-sm text-muted-foreground list-disc list-inside space-y-1">
                       {result.suggestions.map((suggestion, index) => (
                         <li key={index}>{suggestion}</li>

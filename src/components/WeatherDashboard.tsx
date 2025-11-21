@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -6,7 +6,6 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Cloud, Droplets, Wind, Thermometer, Eye, Gauge } from "lucide-react";
-import { useTranslation } from "react-i18next";
 
 interface WeatherData {
   location: string;
@@ -22,7 +21,6 @@ interface WeatherData {
 }
 
 const WeatherDashboard = () => {
-  const { t } = useTranslation();
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
   const [location, setLocation] = useState("");
@@ -43,14 +41,14 @@ const WeatherDashboard = () => {
 
       setWeather(data);
       toast({
-        title: t("weather.weatherUpdated"),
-        description: `${t("weather.fetchedData")} ${data.location}`,
+        title: "Weather Updated",
+        description: `Fetched latest weather data for ${data.location}`,
       });
     } catch (error) {
       console.error("Weather fetch error:", error);
       toast({
-        title: t("weather.weatherFailed"),
-        description: t("weather.unableToFetch"),
+        title: "Weather Fetch Failed",
+        description: "Unable to fetch weather data. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -68,21 +66,21 @@ const WeatherDashboard = () => {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Cloud className="h-5 w-5 text-primary" />
-          {t("weather.title")}
+          Real-Time Weather Updates
         </CardTitle>
         <CardDescription>
-          {t("weather.description")}
+          Get current weather conditions to make informed farming decisions
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
           <div className="flex gap-2">
             <div className="flex-1 space-y-2">
-              <Label htmlFor="location">{t("weather.location")}</Label>
+              <Label htmlFor="location">Location</Label>
               <Input
                 id="location"
                 type="text"
-                placeholder={t("weather.enterLocation")}
+                placeholder="Enter city name or coordinates"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
                 required
@@ -93,10 +91,10 @@ const WeatherDashboard = () => {
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    {t("weather.loading")}
+                    Loading...
                   </>
                 ) : (
-                  t("weather.getWeather")
+                  "Get Weather"
                 )}
               </Button>
             </div>
@@ -113,7 +111,7 @@ const WeatherDashboard = () => {
                 <span className="text-5xl font-bold">{weather.temperature}°C</span>
               </div>
               <p className="text-sm text-muted-foreground mt-2">
-                {t("weather.feelsLike")} {weather.feelsLike}°C
+                Feels like {weather.feelsLike}°C
               </p>
             </div>
 
@@ -121,7 +119,7 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Droplets className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">{t("weather.humidity")}</span>
+                  <span className="text-sm font-medium">Humidity</span>
                 </div>
                 <p className="text-2xl font-bold">{weather.humidity}%</p>
               </div>
@@ -129,7 +127,7 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Wind className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">{t("weather.windSpeed")}</span>
+                  <span className="text-sm font-medium">Wind Speed</span>
                 </div>
                 <p className="text-2xl font-bold">{weather.windSpeed} m/s</p>
               </div>
@@ -137,7 +135,7 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Gauge className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">{t("weather.pressure")}</span>
+                  <span className="text-sm font-medium">Pressure</span>
                 </div>
                 <p className="text-2xl font-bold">{weather.pressure} hPa</p>
               </div>
@@ -145,7 +143,7 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Eye className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">{t("weather.visibility")}</span>
+                  <span className="text-sm font-medium">Visibility</span>
                 </div>
                 <p className="text-2xl font-bold">{(weather.visibility / 1000).toFixed(1)} km</p>
               </div>
@@ -153,7 +151,7 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Cloud className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">{t("weather.cloudCover")}</span>
+                  <span className="text-sm font-medium">Cloud Cover</span>
                 </div>
                 <p className="text-2xl font-bold">{weather.cloudCover}%</p>
               </div>
@@ -164,7 +162,7 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-4">
                   <Droplets className="h-5 w-5 text-primary" />
-                  <span className="text-lg font-semibold">{t("weather.monthlyRainfall")}</span>
+                  <span className="text-lg font-semibold">Monthly Rainfall</span>
                 </div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                   {weather.monthlyRainfall.map((data, index) => (
