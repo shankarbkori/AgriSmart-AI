@@ -158,22 +158,6 @@ const WeatherDashboard = () => {
 
             </div>
 
-            {weather.monthlyRainfall && weather.monthlyRainfall.length > 0 && (
-              <div className="p-4 bg-card border rounded-lg">
-                <div className="flex items-center gap-2 mb-4">
-                  <Droplets className="h-5 w-5 text-primary" />
-                  <span className="text-lg font-semibold">Monthly Rainfall</span>
-                </div>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-                  {weather.monthlyRainfall.map((data, index) => (
-                    <div key={index} className="text-center p-2 bg-primary/5 rounded">
-                      <p className="text-xs text-muted-foreground mb-1">{data.month}</p>
-                      <p className="text-sm font-bold">{data.rainfall} mm</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         )}
       </CardContent>
