@@ -7,7 +7,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2, TrendingUp, MapPin } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 
 const CropYieldPrediction = () => {
   const { toast } = useToast();
@@ -196,7 +195,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rainfall">Rainfall (mm) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="rainfall">Rainfall (mm)</Label>
               <Input
                 id="rainfall"
                 type="number"
@@ -235,7 +234,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="temperature">Avg Temperature (°C) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="temperature">Avg Temperature (°C)</Label>
               <Input
                 id="temperature"
                 type="number"
@@ -248,7 +247,7 @@ const CropYieldPrediction = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="humidity">Humidity (%) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="humidity">Humidity (%)</Label>
               <Input
                 id="humidity"
                 type="number"

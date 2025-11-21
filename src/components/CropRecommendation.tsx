@@ -219,7 +219,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="temperature">Temperature (°C) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="temperature">Temperature (°C)</Label>
               <Input
                 id="temperature"
                 type="number"
@@ -232,7 +232,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="humidity">Humidity (%) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="humidity">Humidity (%)</Label>
               <Input
                 id="humidity"
                 type="number"
@@ -245,7 +245,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="ph">Soil pH <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="ph">Soil pH</Label>
               <Input
                 id="ph"
                 type="number"
@@ -258,7 +258,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="rainfall">Rainfall (mm) <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="rainfall">Rainfall (mm)</Label>
               <Input
                 id="rainfall"
                 type="number"
@@ -271,7 +271,7 @@ const CropRecommendation = () => {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="season">Season <Badge variant="outline" className="ml-1 text-xs">Auto</Badge></Label>
+              <Label htmlFor="season">Season</Label>
               <Select
                 value={formData.season}
                 onValueChange={(value) => setFormData({ ...formData, season: value })}
