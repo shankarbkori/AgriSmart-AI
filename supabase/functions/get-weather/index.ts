@@ -127,8 +127,8 @@ serve(async (req) => {
       const errorData = await response.json().catch(() => ({}));
       console.error('OpenWeatherMap API error:', response.status, errorData);
 
-      // Graceful fallback: return mock data for invalid key or rate limit
-      if (response.status === 401 || response.status === 429) {
+      // Graceful fallback: return mock data for invalid key, rate limit, or city not found
+      if (response.status === 401 || response.status === 429 || response.status === 404) {
         // Estimate rainfall using provided coordinates when available
         let annualRainfall = 900; // Default moderate
         if (typeof lat === 'number' && typeof lon === 'number') {
@@ -154,6 +154,8 @@ serve(async (req) => {
           source: 'mock',
           note: response.status === 401
             ? 'Invalid or inactive OpenWeather API key. Returning mock data.'
+            : response.status === 404
+            ? `Location "${location || 'specified'}" not found. Please try a specific city name. Returning mock data.`
             : 'Rate limited by OpenWeather. Returning mock data.'
         };
         return new Response(
