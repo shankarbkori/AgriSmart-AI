@@ -216,8 +216,26 @@ serve(async (req) => {
     const coordLat = data.coord.lat;
     const coordLon = data.coord.lon;
     
-    // Fetch current rainfall from Open-Meteo (more accurate than OpenWeatherMap)
-    const currentRainfall = await fetchCurrentRainfall(coordLat, coordLon);
+    // Derive current rainfall using multiple sources (OpenWeather + Open-Meteo)
+    const openWeatherRain = data.rain?.['1h'] ?? 0;
+    const description = (data.weather?.[0]?.description || '') as string;
+    const isRainByDescription = /rain|drizzle|thunderstorm|shower/i.test(description);
+    
+    const openMeteoRain = await fetchCurrentRainfall(coordLat, coordLon);
+    
+    let currentRainfall = openWeatherRain || openMeteoRain;
+    
+    // If APIs report 0mm but description says it's raining, estimate intensity
+    if (currentRainfall === 0 && isRainByDescription) {
+      const descLower = description.toLowerCase();
+      if (descLower.includes('heavy') || descLower.includes('intense')) {
+        currentRainfall = 7.5; // heavy rain approx mm/h
+      } else if (descLower.includes('moderate')) {
+        currentRainfall = 2.5; // moderate rain approx mm/h
+      } else {
+        currentRainfall = 0.5; // light rain approx mm/h
+      }
+    }
     
     // Try to get accurate monthly rainfall from Open-Meteo (free, no API key needed)
     let monthlyRainfall: { month: string; rainfall: number }[] = [];
