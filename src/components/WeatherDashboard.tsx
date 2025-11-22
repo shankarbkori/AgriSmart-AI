@@ -17,9 +17,10 @@ interface WeatherData {
   description: string;
   visibility: number;
   cloudCover: number;
+  weathercode: number;
+  isRaining: boolean;
   currentRainfall: number;
   monthlyRainfall: { month: string; rainfall: number }[];
-  avgMonthlyRainfall?: number;
 }
 
 const WeatherDashboard = () => {
@@ -52,14 +53,7 @@ const WeatherDashboard = () => {
 
       if (error) throw error;
 
-      // Calculate average monthly rainfall (same as crop recommendation/yield prediction)
-      let avgMonthlyRainfall = 75; // default
-      if (data.monthlyRainfall && Array.isArray(data.monthlyRainfall)) {
-        const total = data.monthlyRainfall.reduce((sum: number, item: any) => sum + item.rainfall, 0);
-        avgMonthlyRainfall = Math.round(total / data.monthlyRainfall.length);
-      }
-
-      setWeather({ ...data, avgMonthlyRainfall });
+      setWeather(data);
       toast({
         title: "Weather Updated",
         description: `Fetched latest weather data for ${data.location}`,
@@ -177,10 +171,18 @@ const WeatherDashboard = () => {
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Droplets className="h-5 w-5 text-primary" />
-                  <span className="text-sm font-medium">Rainfall</span>
+                  <span className="text-sm font-medium">Rainfall Status</span>
                 </div>
-                <p className="text-2xl font-bold">{weather.avgMonthlyRainfall || 75} mm</p>
-                <p className="text-sm text-muted-foreground mt-1">Avg monthly</p>
+                {weather.isRaining ? (
+                  <>
+                    <p className="text-2xl font-bold text-primary">Raining</p>
+                    {weather.currentRainfall > 0 && (
+                      <p className="text-sm text-muted-foreground mt-1">{weather.currentRainfall.toFixed(1)} mm</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-2xl font-bold text-muted-foreground">Not Raining</p>
+                )}
               </div>
 
               <div className="p-4 bg-card border rounded-lg">
