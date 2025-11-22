@@ -141,7 +141,7 @@ const DiseaseDetection = () => {
           Crop Disease Detection
         </CardTitle>
         <CardDescription>
-          Upload a plant image to detect diseases using AI vision analysis
+          Upload a plant image to detect diseases
         </CardDescription>
       </CardHeader>
       <CardContent>
