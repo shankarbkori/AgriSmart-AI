@@ -3,7 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, AlertCircle, Upload, CheckCircle2 } from "lucide-react";
+import { Loader2, AlertCircle, Upload, CheckCircle2, XCircle, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 interface DiseaseResult {
@@ -74,10 +74,26 @@ const DiseaseDetection = () => {
 
       console.log("Disease detection result:", data);
       setResult(data);
-      toast({
-        title: "Analysis Complete",
-        description: `Disease detected: ${data.disease}`,
-      });
+      
+      // Customize toast based on result type
+      if (data.disease === "Invalid Image") {
+        toast({
+          title: "Invalid Image",
+          description: "Please upload a clear image of a plant leaf",
+          variant: "destructive",
+        });
+      } else if (data.disease === "Unknown") {
+        toast({
+          title: "Analysis Uncertain",
+          description: "Unable to identify disease with confidence. Try a clearer image.",
+          variant: "default",
+        });
+      } else {
+        toast({
+          title: "Analysis Complete",
+          description: `Detected: ${data.disease}`,
+        });
+      }
     } catch (error) {
       console.error("Disease detection error:", error);
       toast({
@@ -100,6 +116,20 @@ const DiseaseDetection = () => {
         return "secondary";
       default:
         return "default";
+    }
+  };
+
+  const getResultIcon = () => {
+    if (!result) return null;
+    
+    if (result.disease === "Invalid Image") {
+      return <XCircle className="h-8 w-8 text-destructive" />;
+    } else if (result.disease === "Unknown") {
+      return <HelpCircle className="h-8 w-8 text-yellow-500" />;
+    } else if (result.disease.toLowerCase() === "healthy") {
+      return <CheckCircle2 className="h-8 w-8 text-green-500" />;
+    } else {
+      return <AlertCircle className="h-8 w-8 text-destructive" />;
     }
   };
 
@@ -178,11 +208,7 @@ const DiseaseDetection = () => {
                     )}
                   </div>
                 </div>
-                {result.disease.toLowerCase() === "healthy" ? (
-                  <CheckCircle2 className="h-8 w-8 text-green-500" />
-                ) : (
-                  <AlertCircle className="h-8 w-8 text-destructive" />
-                )}
+                {getResultIcon()}
               </div>
 
               <div className="space-y-3">
