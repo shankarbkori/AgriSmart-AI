@@ -153,9 +153,6 @@ const WeatherDashboard = () => {
                 <MapPin className="h-4 w-4" />
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Supports cities, regions, and coordinates from anywhere in the world
-            </p>
           </div>
         </form>
 
