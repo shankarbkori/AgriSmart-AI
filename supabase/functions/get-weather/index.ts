@@ -46,6 +46,30 @@ function estimateSoilPH(lat: number, lon: number, rainfall: number, temperature:
   return Math.round(pH * 10) / 10;
 }
 
+// Fetch current rainfall from Open-Meteo (free, no API key required)
+async function fetchCurrentRainfall(lat: number, lon: number): Promise<number> {
+  try {
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation&timezone=auto`;
+    
+    console.log('Fetching current rainfall from Open-Meteo...');
+    const response = await fetch(url);
+    
+    if (!response.ok) {
+      console.error('Open-Meteo current weather API error:', response.status);
+      return 0;
+    }
+    
+    const data = await response.json();
+    const currentPrecipitation = data.current?.precipitation || 0;
+    
+    console.log(`Current precipitation: ${currentPrecipitation} mm`);
+    return currentPrecipitation;
+  } catch (error) {
+    console.error('Error fetching current rainfall from Open-Meteo:', error);
+    return 0;
+  }
+}
+
 // Fetch historical rainfall data from Open-Meteo (free, no API key required)
 async function fetchRainfallData(lat: number, lon: number): Promise<{ month: string; rainfall: number }[]> {
   try {
@@ -192,6 +216,9 @@ serve(async (req) => {
     const coordLat = data.coord.lat;
     const coordLon = data.coord.lon;
     
+    // Fetch current rainfall from Open-Meteo (more accurate than OpenWeatherMap)
+    const currentRainfall = await fetchCurrentRainfall(coordLat, coordLon);
+    
     // Try to get accurate monthly rainfall from Open-Meteo (free, no API key needed)
     let monthlyRainfall: { month: string; rainfall: number }[] = [];
     monthlyRainfall = await fetchRainfallData(coordLat, coordLon);
@@ -255,7 +282,7 @@ serve(async (req) => {
       description: data.weather[0].description,
       visibility: data.visibility,
       cloudCover: data.clouds.all,
-      currentRainfall: data.rain?.['1h'] || 0, // Current rainfall in mm (last 1 hour)
+      currentRainfall: currentRainfall, // Current rainfall in mm from Open-Meteo
       monthlyRainfall: monthlyRainfall, // Monthly rainfall data
       ph: estimatedPH, // Estimated soil pH
       coordinates: { lat: coordLat, lon: coordLon },
