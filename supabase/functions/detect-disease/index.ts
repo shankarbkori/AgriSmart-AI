@@ -103,16 +103,27 @@ const analyzeDiseaseWithAI = async (imageBase64: string) => {
           content: [
             {
               type: 'text',
-              text: `You are an expert plant pathologist. Analyze this plant image and identify any diseases or health issues. 
-              
-Respond with ONLY a JSON object in this exact format (no other text):
+              text: `You are an expert plant pathologist. Analyze this image with these strict validation rules:
+
+STEP 1: VALIDATE if this is a plant leaf or plant part
+- If the image is NOT a plant leaf (e.g., random objects, people, animals, text, etc.), respond with: {"isPlant": false, "disease": "Invalid Image", "confidence": 0.0, "severity": "Low"}
+- If the image is too blurry, dark, or unclear to analyze properly, respond with: {"isPlant": false, "disease": "Invalid Image", "confidence": 0.0, "severity": "Low"}
+
+STEP 2: If it IS a valid plant leaf image, analyze for diseases
+- Identify the disease with high confidence (>0.6)
+- If you're unsure (confidence <0.6), respond with: {"isPlant": true, "disease": "Unknown", "confidence": [your confidence], "severity": "Low"}
+
+Respond with ONLY a JSON object in this exact format:
 {
-  "disease": "name of disease or 'Healthy' if no disease",
+  "isPlant": true or false,
+  "disease": "name of disease or 'Healthy' or 'Invalid Image' or 'Unknown'",
   "confidence": 0.0-1.0,
   "severity": "Low", "Medium", or "High"
 }
 
-Common diseases to check for: Leaf Blight, Powdery Mildew, Bacterial Wilt, Mosaic Virus, Root Rot, Rust, Anthracnose, or Healthy.`
+Common diseases: Leaf Blight, Powdery Mildew, Bacterial Wilt, Mosaic Virus, Root Rot, Rust, Anthracnose, or Healthy.
+
+Be strict: Only classify as "Healthy" if you're confident (>0.7) it's a plant leaf with NO disease signs.`
             },
             {
               type: 'image_url',
@@ -147,6 +158,37 @@ Common diseases to check for: Leaf Blight, Powdery Mildew, Bacterial Wilt, Mosai
   }
 
   const analysis = JSON.parse(jsonMatch[0]);
+  
+  // Validate if image is a plant
+  if (analysis.isPlant === false || analysis.disease === 'Invalid Image') {
+    return {
+      disease: 'Invalid Image',
+      confidence: 0.0,
+      severity: 'Low',
+      description: 'The uploaded image does not appear to be a plant leaf or is of insufficient quality for analysis.',
+      treatment: 'Please upload a clear, well-lit image of a plant leaf showing any symptoms or affected areas.',
+      pesticides: [],
+      fertilizers: [],
+      applicationTiming: 'N/A',
+      preventiveMeasures: 'Ensure the image contains a visible plant leaf with good lighting and focus.'
+    };
+  }
+  
+  // Check confidence threshold
+  const MIN_CONFIDENCE = 0.6;
+  if (analysis.confidence < MIN_CONFIDENCE || analysis.disease === 'Unknown') {
+    return {
+      disease: 'Unknown',
+      confidence: analysis.confidence,
+      severity: 'Low',
+      description: 'The disease could not be identified with sufficient confidence. The image quality may be poor or the disease may not be in our database.',
+      treatment: 'Please try uploading a clearer, closer image of the affected area. If symptoms persist, consult a local agricultural expert.',
+      pesticides: [],
+      fertilizers: [],
+      applicationTiming: 'N/A',
+      preventiveMeasures: 'Take photos in good lighting showing clear symptoms on leaves.'
+    };
+  }
   
   // Get disease details from database
   const diseaseInfo = diseaseDatabase[analysis.disease as keyof typeof diseaseDatabase] || diseaseDatabase['Healthy'];
