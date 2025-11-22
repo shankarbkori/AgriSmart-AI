@@ -46,28 +46,43 @@ function estimateSoilPH(lat: number, lon: number, rainfall: number, temperature:
   return Math.round(pH * 10) / 10;
 }
 
-// Fetch current rainfall from Open-Meteo (free, no API key required)
-async function fetchCurrentRainfall(lat: number, lon: number): Promise<number> {
+// Fetch current weather including weathercode from Open-Meteo
+async function fetchCurrentWeather(lat: number, lon: number): Promise<{ weathercode: number; precipitation: number }> {
   try {
-    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=precipitation&timezone=auto`;
+    const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current=weathercode,precipitation&timezone=auto`;
     
-    console.log('Fetching current rainfall from Open-Meteo...');
+    console.log('Fetching current weather from Open-Meteo...');
     const response = await fetch(url);
     
     if (!response.ok) {
       console.error('Open-Meteo current weather API error:', response.status);
-      return 0;
+      return { weathercode: 0, precipitation: 0 };
     }
     
     const data = await response.json();
-    const currentPrecipitation = data.current?.precipitation || 0;
+    const weathercode = data.current?.weathercode || 0;
+    const precipitation = data.current?.precipitation || 0;
     
-    console.log(`Current precipitation: ${currentPrecipitation} mm`);
-    return currentPrecipitation;
+    console.log(`Current weathercode: ${weathercode}, precipitation: ${precipitation} mm`);
+    return { weathercode, precipitation };
   } catch (error) {
-    console.error('Error fetching current rainfall from Open-Meteo:', error);
-    return 0;
+    console.error('Error fetching current weather from Open-Meteo:', error);
+    return { weathercode: 0, precipitation: 0 };
   }
+}
+
+// Map Open-Meteo weathercode to rain status
+function isRainingFromWeathercode(weathercode: number): boolean {
+  const rainingCodes = [
+    51, 53, 55,  // Drizzle
+    56, 57,      // Freezing drizzle
+    61, 63, 65,  // Rain
+    66, 67,      // Freezing rain
+    80, 81, 82,  // Rain showers
+    95, 96, 99   // Thunderstorm
+  ];
+  
+  return rainingCodes.includes(weathercode);
 }
 
 // Fetch historical rainfall data from Open-Meteo (free, no API key required)
@@ -216,26 +231,11 @@ serve(async (req) => {
     const coordLat = data.coord.lat;
     const coordLon = data.coord.lon;
     
-    // Derive current rainfall using multiple sources (OpenWeather + Open-Meteo)
-    const openWeatherRain = data.rain?.['1h'] ?? 0;
-    const description = (data.weather?.[0]?.description || '') as string;
-    const isRainByDescription = /rain|drizzle|thunderstorm|shower/i.test(description);
+    // Fetch weathercode from Open-Meteo to determine if it's raining
+    const { weathercode, precipitation } = await fetchCurrentWeather(coordLat, coordLon);
+    const isRaining = isRainingFromWeathercode(weathercode);
     
-    const openMeteoRain = await fetchCurrentRainfall(coordLat, coordLon);
-    
-    let currentRainfall = openWeatherRain || openMeteoRain;
-    
-    // If APIs report 0mm but description says it's raining, estimate intensity
-    if (currentRainfall === 0 && isRainByDescription) {
-      const descLower = description.toLowerCase();
-      if (descLower.includes('heavy') || descLower.includes('intense')) {
-        currentRainfall = 7.5; // heavy rain approx mm/h
-      } else if (descLower.includes('moderate')) {
-        currentRainfall = 2.5; // moderate rain approx mm/h
-      } else {
-        currentRainfall = 0.5; // light rain approx mm/h
-      }
-    }
+    console.log(`Weather analysis: code=${weathercode}, isRaining=${isRaining}, precipitation=${precipitation}mm`);
     
     // Try to get accurate monthly rainfall from Open-Meteo (free, no API key needed)
     let monthlyRainfall: { month: string; rainfall: number }[] = [];
@@ -300,7 +300,9 @@ serve(async (req) => {
       description: data.weather[0].description,
       visibility: data.visibility,
       cloudCover: data.clouds.all,
-      currentRainfall: currentRainfall, // Current rainfall in mm from Open-Meteo
+      weathercode: weathercode, // Open-Meteo weather code
+      isRaining: isRaining, // Boolean: is it currently raining
+      currentRainfall: precipitation, // Current rainfall in mm from Open-Meteo
       monthlyRainfall: monthlyRainfall, // Monthly rainfall data
       ph: estimatedPH, // Estimated soil pH
       coordinates: { lat: coordLat, lon: coordLon },
