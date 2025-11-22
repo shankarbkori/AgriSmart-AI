@@ -289,6 +289,7 @@ serve(async (req) => {
       description: data.weather[0].description,
       visibility: data.visibility,
       cloudCover: data.clouds.all,
+      currentRainfall: data.rain?.['1h'] || 0, // Current rainfall in mm (last 1 hour)
       monthlyRainfall: monthlyRainfall, // Monthly rainfall data
       ph: estimatedPH, // Estimated soil pH
       coordinates: { lat: coordLat, lon: coordLon },

@@ -17,6 +17,7 @@ interface WeatherData {
   description: string;
   visibility: number;
   cloudCover: number;
+  currentRainfall: number;
   monthlyRainfall: { month: string; rainfall: number }[];
 }
 
@@ -116,6 +117,21 @@ const WeatherDashboard = () => {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+              <div className="p-4 bg-card border rounded-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Droplets className="h-5 w-5 text-primary" />
+                  <span className="text-sm font-medium">Rainfall</span>
+                </div>
+                {weather.currentRainfall > 0 ? (
+                  <>
+                    <p className="text-2xl font-bold">{weather.currentRainfall.toFixed(1)} mm</p>
+                    <p className="text-sm text-muted-foreground mt-1">It's raining</p>
+                  </>
+                ) : (
+                  <p className="text-lg font-medium text-muted-foreground">It's not raining</p>
+                )}
+              </div>
+
               <div className="p-4 bg-card border rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
                   <Droplets className="h-5 w-5 text-primary" />
