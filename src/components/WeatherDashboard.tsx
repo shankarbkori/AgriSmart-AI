@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Cloud, Droplets, Wind, Thermometer, Eye, Gauge } from "lucide-react";
+import { Loader2, Cloud, Droplets, Wind, Thermometer, Eye, Gauge, MapPin } from "lucide-react";
 
 interface WeatherData {
   location: string;
@@ -27,15 +27,26 @@ const WeatherDashboard = () => {
   const [location, setLocation] = useState("");
   const [weather, setWeather] = useState<WeatherData | null>(null);
 
-  const fetchWeather = async (loc?: string) => {
+  const fetchWeather = async (loc?: string, latitude?: number, longitude?: number) => {
     const searchLocation = loc || location;
-    if (!searchLocation) return;
+    if (!searchLocation && !latitude && !longitude) {
+      toast({
+        title: "Location Required",
+        description: "Please enter a location or use your current location",
+        variant: "destructive",
+      });
+      return;
+    }
 
     setLoading(true);
 
     try {
+      const body = latitude && longitude 
+        ? { lat: latitude, lon: longitude }
+        : { location: searchLocation };
+
       const { data, error } = await supabase.functions.invoke("get-weather", {
-        body: { location: searchLocation },
+        body,
       });
 
       if (error) throw error;
@@ -53,10 +64,36 @@ const WeatherDashboard = () => {
         description: errorMessage,
         variant: "destructive",
       });
-      setWeather(null); // Clear any previous weather data
+      setWeather(null);
     } finally {
       setLoading(false);
     }
+  };
+
+  const useCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      toast({
+        title: "Geolocation Not Supported",
+        description: "Your browser doesn't support geolocation",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        fetchWeather(undefined, position.coords.latitude, position.coords.longitude);
+      },
+      (error) => {
+        setLoading(false);
+        toast({
+          title: "Location Access Denied",
+          description: "Please allow location access or enter a location manually",
+          variant: "destructive",
+        });
+      }
+    );
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -77,19 +114,17 @@ const WeatherDashboard = () => {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4 mb-6">
-          <div className="flex gap-2">
-            <div className="flex-1 space-y-2">
-              <Label htmlFor="location">Location</Label>
+          <div className="space-y-2">
+            <Label htmlFor="location">Location</Label>
+            <div className="flex gap-2">
               <Input
                 id="location"
                 type="text"
-                placeholder="Enter city name or coordinates"
+                placeholder="City name, region, or country (e.g., Tokyo, Sahara Desert, Antarctica)"
                 value={location}
                 onChange={(e) => setLocation(e.target.value)}
-                required
+                className="flex-1"
               />
-            </div>
-            <div className="flex items-end">
               <Button type="submit" disabled={loading}>
                 {loading ? (
                   <>
@@ -100,7 +135,19 @@ const WeatherDashboard = () => {
                   "Get Weather"
                 )}
               </Button>
+              <Button 
+                type="button" 
+                variant="outline" 
+                onClick={useCurrentLocation}
+                disabled={loading}
+                title="Use my current location"
+              >
+                <MapPin className="h-4 w-4" />
+              </Button>
             </div>
+            <p className="text-xs text-muted-foreground">
+              Supports cities, regions, and coordinates from anywhere in the world
+            </p>
           </div>
         </form>
 
