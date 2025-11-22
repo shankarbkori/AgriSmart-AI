@@ -19,6 +19,7 @@ interface WeatherData {
   cloudCover: number;
   currentRainfall: number;
   monthlyRainfall: { month: string; rainfall: number }[];
+  avgMonthlyRainfall?: number;
 }
 
 const WeatherDashboard = () => {
@@ -51,7 +52,14 @@ const WeatherDashboard = () => {
 
       if (error) throw error;
 
-      setWeather(data);
+      // Calculate average monthly rainfall (same as crop recommendation/yield prediction)
+      let avgMonthlyRainfall = 75; // default
+      if (data.monthlyRainfall && Array.isArray(data.monthlyRainfall)) {
+        const total = data.monthlyRainfall.reduce((sum: number, item: any) => sum + item.rainfall, 0);
+        avgMonthlyRainfall = Math.round(total / data.monthlyRainfall.length);
+      }
+
+      setWeather({ ...data, avgMonthlyRainfall });
       toast({
         title: "Weather Updated",
         description: `Fetched latest weather data for ${data.location}`,
@@ -171,14 +179,8 @@ const WeatherDashboard = () => {
                   <Droplets className="h-5 w-5 text-primary" />
                   <span className="text-sm font-medium">Rainfall</span>
                 </div>
-                {weather.currentRainfall > 0 ? (
-                  <>
-                    <p className="text-2xl font-bold">{weather.currentRainfall.toFixed(1)} mm</p>
-                    <p className="text-sm text-muted-foreground mt-1">It's raining</p>
-                  </>
-                ) : (
-                  <p className="text-lg font-medium text-muted-foreground">It's not raining</p>
-                )}
+                <p className="text-2xl font-bold">{weather.avgMonthlyRainfall || 75} mm</p>
+                <p className="text-sm text-muted-foreground mt-1">Avg monthly</p>
               </div>
 
               <div className="p-4 bg-card border rounded-lg">
