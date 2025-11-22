@@ -174,47 +174,13 @@ serve(async (req) => {
       const errorData = await response.json().catch(() => ({}));
       console.error('OpenWeatherMap API error:', response.status, errorData);
 
-      // Graceful fallback: return mock data for invalid key, rate limit, or city not found
-      if (response.status === 401 || response.status === 429 || response.status === 404) {
-        // Estimate rainfall using provided coordinates when available
-        let annualRainfall = 900; // Default moderate
-        if (typeof lat === 'number' && typeof lon === 'number') {
-          if (lat >= -23.5 && lat <= 23.5) annualRainfall = 1800; // Tropics
-          else if ((lat > 23.5 && lat <= 40) || (lat < -23.5 && lat >= -40)) annualRainfall = 900; // Temperate
-          else if (lat >= 15 && lat <= 35 && ((lon >= -20 && lon <= 60) || (lon >= -120 && lon <= -100))) annualRainfall = 250; // Desert belts
-        }
-        const mockHumidity = 65;
-        if (mockHumidity < 40) annualRainfall *= 0.6;
-        else if (mockHumidity > 70) annualRainfall *= 1.2;
-
-        const mockLat = typeof lat === 'number' ? lat : 20;
-        const mockLon = typeof lon === 'number' ? lon : 75;
-        const mockTemp = 25;
-        const estimatedPH = estimateSoilPH(mockLat, mockLon, annualRainfall, mockTemp);
-        
-        const mockData = {
-          location: location || (lat && lon ? `${lat},${lon}` : 'Current Location'),
-          temperature: mockTemp,
-          feelsLike: 27,
-          humidity: mockHumidity,
-          pressure: 1013,
-          windSpeed: 3.5,
-          description: 'partly cloudy',
-          visibility: 10000,
-          cloudCover: 40,
-          rainfall: Math.round(annualRainfall),
-          ph: estimatedPH,
-          source: 'mock',
-          note: response.status === 401
-            ? 'Invalid or inactive OpenWeather API key. Returning mock data.'
-            : response.status === 404
-            ? `Location "${location || 'specified'}" not found. Please try a specific city name. Returning mock data.`
-            : 'Rate limited by OpenWeather. Returning mock data.'
-        };
-        return new Response(
-          JSON.stringify(mockData),
-          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
+      // Return specific error messages for different failure cases
+      if (response.status === 404) {
+        throw new Error(`Location "${location || 'specified'}" not found. Please enter a valid city name.`);
+      } else if (response.status === 401) {
+        throw new Error('Weather service authentication failed. Please contact support.');
+      } else if (response.status === 429) {
+        throw new Error('Weather service rate limit exceeded. Please try again later.');
       }
 
       throw new Error(`Weather API request failed: ${response.status} - ${errorData.message || 'Unknown error'}`);

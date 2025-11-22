@@ -47,11 +47,13 @@ const WeatherDashboard = () => {
       });
     } catch (error) {
       console.error("Weather fetch error:", error);
+      const errorMessage = error instanceof Error ? error.message : "Unable to fetch weather data. Please try again.";
       toast({
         title: "Weather Fetch Failed",
-        description: "Unable to fetch weather data. Please try again.",
+        description: errorMessage,
         variant: "destructive",
       });
+      setWeather(null); // Clear any previous weather data
     } finally {
       setLoading(false);
     }
