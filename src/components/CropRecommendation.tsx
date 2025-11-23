@@ -119,6 +119,30 @@ const CropRecommendation = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate numeric inputs
+    const numericFields = [
+      { name: 'Nitrogen (N)', value: formData.nitrogen },
+      { name: 'Phosphorus (P)', value: formData.phosphorus },
+      { name: 'Potassium (K)', value: formData.potassium },
+      { name: 'Temperature', value: formData.temperature },
+      { name: 'Humidity', value: formData.humidity },
+      { name: 'pH', value: formData.ph },
+      { name: 'Rainfall', value: formData.rainfall },
+    ];
+
+    for (const field of numericFields) {
+      const numValue = parseFloat(field.value);
+      if (isNaN(numValue) || field.value.trim() === '') {
+        toast({
+          title: "Invalid Input",
+          description: `${field.name}: Enter valid numeric values`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setLoading(true);
     setRecommendations([]);
 
