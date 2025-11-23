@@ -74,6 +74,37 @@ const CropYieldPrediction = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Validate numeric inputs
+    const numericFields = [
+      { name: 'Area', value: formData.area },
+      { name: 'Rainfall', value: formData.rainfall },
+      { name: 'Fertilizer', value: formData.fertilizer },
+      { name: 'Pesticide', value: formData.pesticide },
+      { name: 'Temperature', value: formData.temperature },
+      { name: 'Humidity', value: formData.humidity },
+    ];
+
+    for (const field of numericFields) {
+      const numValue = parseFloat(field.value);
+      if (isNaN(numValue) || field.value.trim() === '') {
+        toast({
+          title: "Invalid Input",
+          description: `${field.name}: Enter valid numeric values`,
+          variant: "destructive",
+        });
+        return;
+      }
+      if (numValue < 0) {
+        toast({
+          title: "Invalid Input",
+          description: `${field.name}: Values cannot be negative`,
+          variant: "destructive",
+        });
+        return;
+      }
+    }
+
     setLoading(true);
     setPrediction(null);
 
